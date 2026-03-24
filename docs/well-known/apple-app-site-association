@@ -1,0 +1,13 @@
+{
+    "applinks": {
+        "apps": [],
+        "details": [
+            {
+                "appID": "2NDLMV9248.com.jovelupe.wap",
+                "paths": [
+                    "/*/eventos/*"
+                ]
+            }
+        ]
+    }
+}

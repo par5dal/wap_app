@@ -1,0 +1,14 @@
+[
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.jovelupe.wap",
+            "sha256_cert_fingerprints": [
+                "B2:7C:34:02:1A:CC:0A:3F:79:AF:DE:64:85:50:19:21:A9:52:1F:81:35:B7:A5:43:8F:08:01:97:40:71:AE:AC"
+            ]
+        }
+    }
+]

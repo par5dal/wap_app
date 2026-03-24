@@ -1,0 +1,225 @@
+name: iOS Release Build
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: # Permite ejecutar manualmente
+
+jobs:
+  build:
+    name: Build iOS App
+    runs-on: macos-15 # macOS 15 Sequoia con Xcode 26 (iOS 26 SDK)
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Select Xcode 26
+      run: |
+        echo "Available Xcode installations:"
+        ls /Applications/Xcode*.app/ 2>/dev/null || ls /Applications/ | grep Xcode
+        # Seleccionar la versión 26.x más reciente disponible
+        XCODE_26=$(ls -d /Applications/Xcode_26*.app/ 2>/dev/null | sort -V | tail -1 | sed 's|/$||')
+        if [ -z "$XCODE_26" ]; then
+          echo "ERROR: Xcode 26 not found. Available versions:"
+          ls /Applications/Xcode*.app/
+          exit 1
+        fi
+        echo "Using Xcode: $XCODE_26"
+        sudo xcode-select -s "$XCODE_26/Contents/Developer"
+        xcodebuild -version
+    
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+    
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.41.2'
+        channel: 'stable'
+        cache: true
+    
+    - name: Flutter doctor
+      run: flutter doctor -v
+    
+    - name: Install dependencies
+      run: flutter pub get
+    
+    - name: Create .env file
+      run: |
+        echo "API_BASE_URL=${{ secrets.API_BASE_URL }}" >> .env
+        echo "SENTRY_DSN_ANDROID=${{ secrets.SENTRY_DSN_ANDROID }}" >> .env
+        echo "SENTRY_DSN_IOS=${{ secrets.SENTRY_DSN_IOS }}" >> .env
+        echo "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >> .env
+        echo "GOOGLE_SERVER_CLIENT_ID=${{ secrets.GOOGLE_SERVER_CLIENT_ID }}" >> .env
+        echo "CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}" >> .env
+        echo "GOOGLE_PLACES_API_KEY=${{ secrets.GOOGLE_PLACES_API_KEY }}" >> .env
+        echo "GOOGLE_PLACES_API_KEY_IOS=${{ secrets.GOOGLE_PLACES_API_KEY_IOS }}" >> .env
+        echo "GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}" >> .env
+        echo "GOOGLE_MAPS_API_KEY_IOS=${{ secrets.GOOGLE_MAPS_API_KEY_IOS }}" >> .env
+        echo "MAPBOX_ACCESS_TOKEN=${{ secrets.MAPBOX_ACCESS_TOKEN }}" >> .env
+    
+    - name: Install CocoaPods
+      run: |
+        cd ios
+        pod install
+        cd ..
+    
+    - name: Import certificates
+      env:
+        CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
+        CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+        PROVISIONING_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE_BASE64 }}
+      run: |
+        # Crear keychain temporal
+        KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+        KEYCHAIN_PASSWORD=$(openssl rand -base64 32)
+        
+        # Eliminar keychain si existe
+        security delete-keychain $KEYCHAIN_PATH 2>/dev/null || true
+        
+        # Crear keychain
+        security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+        security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+        security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+        
+        # Importar certificado
+        CERTIFICATE_PATH=$RUNNER_TEMP/certificate.p12
+        echo -n "$CERTIFICATE_BASE64" | base64 -D -o $CERTIFICATE_PATH
+        security import $CERTIFICATE_PATH -P "$CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+        
+        # Agregar keychain a la lista de búsqueda (mantener login.keychain también)
+        security list-keychain -d user -s $KEYCHAIN_PATH $(security list-keychain -d user | sed s/\"//g)
+        
+        # Permitir acceso a codesign sin pedir contraseña
+        security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+        
+        # Importar provisioning profile
+        PROVISIONING_PATH=$RUNNER_TEMP/profile.mobileprovision
+        echo -n "$PROVISIONING_PROFILE_BASE64" | base64 -D -o $PROVISIONING_PATH
+        mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+        
+        # Obtener UUID del profile y copiar con ese nombre
+        PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print :UUID" /dev/stdin <<< $(security cms -D -i $PROVISIONING_PATH))
+        echo "Provisioning Profile UUID: $PROFILE_UUID"
+        cp $PROVISIONING_PATH ~/Library/MobileDevice/Provisioning\ Profiles/$PROFILE_UUID.mobileprovision
+        
+        # Verificar instalación
+        echo "Certificates in keychain:"
+        security find-identity -v -p codesigning $KEYCHAIN_PATH
+        echo ""
+        echo "All keychains:"
+        security list-keychain -d user
+        echo ""
+        echo "Provisioning profiles installed:"
+        ls -la ~/Library/MobileDevice/Provisioning\ Profiles/
+        
+        # Guardar info para el build
+        echo "KEYCHAIN_PATH=$KEYCHAIN_PATH" >> $GITHUB_ENV
+        echo "KEYCHAIN_PASSWORD=$KEYCHAIN_PASSWORD" >> $GITHUB_ENV
+        echo "PROFILE_UUID=$PROFILE_UUID" >> $GITHUB_ENV
+    
+    - name: Build iOS App
+      env:
+        KEYCHAIN_PATH: ${{ env.KEYCHAIN_PATH }}
+        KEYCHAIN_PASSWORD: ${{ env.KEYCHAIN_PASSWORD }}
+        PROFILE_UUID: ${{ env.PROFILE_UUID }}
+      run: |
+        # Desbloquear keychain antes del build
+        security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+        
+        # Verificar SDKs disponibles
+        echo "Available iOS SDKs:"
+        xcodebuild -showsdks
+        
+        # Instalar iOS platform si no está instalada (forzar para Xcode 16)
+        echo "Installing iOS platform..."
+        xcodebuild -downloadPlatform iOS || echo "Platform might already be installed or download failed, continuing..."
+        
+        # Generar código Dart necesario
+        flutter pub get
+        dart run build_runner build --delete-conflicting-outputs
+        
+        # Archive con xcodebuild directamente (sin especificar -sdk para que lo detecte auto)
+        cd ios
+        xcodebuild -workspace Runner.xcworkspace \
+          -scheme Runner \
+          -destination 'generic/platform=iOS' \
+          -configuration Release \
+          -archivePath $PWD/build/Runner.xcarchive \
+          archive \
+          CODE_SIGN_IDENTITY="Apple Distribution" \
+          DEVELOPMENT_TEAM=2NDLMV9248 \
+          OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH"
+        
+        # Export IPA
+        xcodebuild -exportArchive \
+          -archivePath $PWD/build/Runner.xcarchive \
+          -exportPath $PWD/build/ipa \
+          -exportOptionsPlist ExportOptions.plist \
+          -allowProvisioningUpdates
+        
+        cd ..
+    
+    - name: Upload IPA artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ios-release
+        path: ios/build/ipa/*.ipa
+        retention-days: 14
+    
+    - name: Validate IPA
+      if: github.ref == 'refs/heads/main'
+      env:
+        API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+        API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        API_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
+      run: |
+        # Crear directorio para API Key
+        mkdir -p ~/.appstoreconnect/private_keys
+        
+        # Decodificar y guardar API Key
+        echo -n "$API_KEY_BASE64" | base64 -D > ~/.appstoreconnect/private_keys/AuthKey_${API_KEY_ID}.p8
+        
+        # Obtener ruta del IPA
+        IPA_PATH=$(find ios/build/ipa -name "*.ipa" | head -1)
+        echo "IPA Path: $IPA_PATH"
+        
+        # Listar contenido del IPA
+        echo "📦 IPA Contents:"
+        unzip -l "$IPA_PATH" | head -20
+        
+        # Validar IPA primero (esto da errores más descriptivos)
+        echo "🔍 Validating IPA..."
+        xcrun altool --validate-app \
+          --type ios \
+          --file "$IPA_PATH" \
+          --apiKey "$API_KEY_ID" \
+          --apiIssuer "$API_ISSUER_ID" \
+          --verbose
+        
+        echo "✅ IPA validation successful!"
+    
+    - name: Upload to TestFlight
+      if: github.ref == 'refs/heads/main'
+      env:
+        API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+        API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        API_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
+      run: |
+        # API Key ya está configurada del paso anterior
+        IPA_PATH=$(find ios/build/ipa -name "*.ipa" | head -1)
+        echo "📤 Uploading IPA: $IPA_PATH"
+        
+        # Subir a TestFlight usando altool
+        xcrun altool --upload-app \
+          --type ios \
+          --file "$IPA_PATH" \
+          --apiKey "$API_KEY_ID" \
+          --apiIssuer "$API_ISSUER_ID" \
+          --verbose
+        
+        echo "✅ IPA uploaded to TestFlight successfully!"

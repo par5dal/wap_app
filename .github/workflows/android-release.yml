@@ -1,0 +1,86 @@
+name: Android Release Build
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: # Permite ejecutar manualmente
+
+jobs:
+  build:
+    name: Build Android App
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.41.2'
+        channel: 'stable'
+        cache: true
+
+    - name: Flutter doctor
+      run: flutter doctor -v
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    - name: Create .env file
+      run: |
+        echo "API_BASE_URL=${{ secrets.API_BASE_URL }}" >> .env
+        echo "SENTRY_DSN_ANDROID=${{ secrets.SENTRY_DSN_ANDROID }}" >> .env
+        echo "SENTRY_DSN_IOS=${{ secrets.SENTRY_DSN_IOS }}" >> .env
+        echo "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >> .env
+        echo "GOOGLE_SERVER_CLIENT_ID=${{ secrets.GOOGLE_SERVER_CLIENT_ID }}" >> .env
+        echo "CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}" >> .env
+        echo "GOOGLE_PLACES_API_KEY=${{ secrets.GOOGLE_PLACES_API_KEY }}" >> .env
+        echo "GOOGLE_PLACES_API_KEY_IOS=${{ secrets.GOOGLE_PLACES_API_KEY_IOS }}" >> .env
+        echo "GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}" >> .env
+        echo "GOOGLE_MAPS_API_KEY_IOS=${{ secrets.GOOGLE_MAPS_API_KEY_IOS }}" >> .env
+        echo "MAPBOX_ACCESS_TOKEN=${{ secrets.MAPBOX_ACCESS_TOKEN }}" >> .env
+      env:
+        KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+      run: |
+        # Decodificar keystore desde secret
+        KEYSTORE_PATH=$RUNNER_TEMP/keystore.jks
+        echo -n "$KEYSTORE_BASE64" | base64 -d > $KEYSTORE_PATH
+
+        # Verificar que el keystore es válido
+        keytool -list -keystore $KEYSTORE_PATH -storepass "$STORE_PASSWORD" -alias "$KEY_ALIAS" -v
+        echo "✅ Keystore verificado correctamente"
+
+        # Crear key.properties para Gradle
+        echo "storePassword=$STORE_PASSWORD" > android/key.properties
+        echo "keyPassword=$KEY_PASSWORD" >> android/key.properties
+        echo "keyAlias=$KEY_ALIAS" >> android/key.properties
+        echo "storeFile=$KEYSTORE_PATH" >> android/key.properties
+
+        echo "KEYSTORE_PATH=$KEYSTORE_PATH" >> $GITHUB_ENV
+
+    - name: Generate code
+      run: dart run build_runner build --delete-conflicting-outputs
+
+    - name: Build Android APK
+      run: flutter build apk --release
+
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-release
+        path: build/app/outputs/flutter-apk/app-release.apk
+        retention-days: 14
+
+    - name: Cleanup keystore
+      if: always()
+      run: rm -f $RUNNER_TEMP/keystore.jks android/key.properties

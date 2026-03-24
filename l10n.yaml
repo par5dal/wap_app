@@ -1,0 +1,14 @@
+# l10n.yaml (VERSIÓN MODERNA Y CORRECTA)
+
+# Directorio donde están tus archivos de traducción.
+arb-dir: lib/l10n
+
+# El archivo base que contiene todas las claves (tu idioma por defecto).
+template-arb-file: app_es.arb
+
+# El nombre del archivo principal que se generará.
+# La herramienta creará `app_localizations.dart`, `app_localizations_es.dart`, etc.
+output-localization-file: app_localizations.dart
+
+# Suprimir warnings sobre metadata faltante en strings simples
+suppress-warnings: true

@@ -1,0 +1,211 @@
+name: wap_app
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+# In Windows, build-name is used as the major, minor, and patch parts
+# of the product and file versions while build-number is used as the build suffix.
+version: 1.2.1+1021
+
+environment:
+  sdk: ^3.9.2
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+
+    # --- Utilidades y Funcionalidad Core ---
+  get_it: ^7.6.7 # Inyección de dependencias (fundamental para Clean Architecture).
+  flutter_bloc: ^8.1.4 # Gestión de estado (BLoC).
+  equatable: ^2.0.5 # Para comparar objetos fácilmente (usado por BLoC).
+
+  # --- Red y Comunicación API ---
+  dio: ^5.4.2 # El cliente HTTP para llamar a nuestra API NestJS.
+
+  # --- Almacenamiento Seguro ---
+  flutter_secure_storage: ^9.0.0 # Para guardar los tokens de forma segura.
+
+  # --- JSON y Modelos ---
+  freezed_annotation: ^3.1.0 # Generación de código para modelos inmutables.
+  json_annotation: ^4.9.0
+
+  # --- Mapas y Geolocalización ---
+  google_maps_flutter: ^2.10.1 # Mapas de Google.
+  geolocator: ^14.0.1 # Obtener ubicación del usuario.
+  geocoding: ^3.0.0 # Convertir direcciones a coordenadas y viceversa.
+
+  # Clustering (desde GitHub con fix)
+  google_maps_cluster_manager:
+    git:
+      url: https://github.com/bpillon/google_maps_cluster_manager.git
+      ref: master  # O commit específico: 7f3e9a2...
+
+  # --- UI y Caché ---
+  cached_network_image: ^3.3.1 # Caché de imágenes de red (imprescindible).
+  carousel_slider: ^5.0.0 # Slider de imágenes para carousels.
+  url_launcher: ^6.3.1 # Para abrir URLs externas (Google Maps, etc.).
+  app_links: ^6.3.3 # Para manejar deep links del callback OAuth de Google.
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.8
+  dartz: ^0.10.1
+  google_fonts: ^6.3.2
+  intl: any
+  flutter_localizations:
+    sdk: flutter
+  shared_preferences: ^2.5.3
+  go_router: ^16.2.4
+  share_plus: ^10.0.0
+  dio_cache_interceptor_hive_store: ^4.0.0
+  dio_cache_interceptor: ^3.5.1
+  hive_flutter: ^1.1.0
+  flutter_dotenv: ^6.0.0
+  path_provider: ^2.1.5
+  uuid: ^4.5.1 # Generar session_token para Mapbox Searchbox API.
+  package_info_plus: ^8.0.0 # Leer versión de la app instalada.
+  connectivity_plus: ^6.0.0 # Detectar cambios de conectividad de red.
+  sentry_flutter: ^9.7.0
+  firebase_core: ^3.0.0 # Firebase SDK base.
+  firebase_analytics: ^11.0.0 # Analytics de uso.
+  firebase_messaging: ^15.0.0 # Push notifications via FCM.
+  animate_do: ^4.2.0
+  google_sign_in: ^7.2.0
+  flutter_svg: ^2.2.1
+  custom_map_markers: ^0.0.2+1
+  logger: ^2.6.2
+  vector_graphics: ^1.1.19
+  image_picker: ^1.2.0
+  permission_handler: ^11.3.1 # Comprobar/solicitar permisos de cámara y notificaciones.
+  flutter_typeahead: ^5.2.0
+  flutter_markdown: ^0.6.0
+  http: ^1.5.0
+
+dev_dependencies:
+  flutter_test:
+    sdk:
+      flutter
+
+      # --- Generadores de Código ---
+  build_runner: ^2.5.4 # Ejecutor de generadores de código.
+  freezed: ^3.1.0 # Generador para `freezed_annotation`.
+  json_serializable: ^6.9.0 # Generador para `json_annotation`.
+  flutter_launcher_icons: ^0.14.1 # Generador de iconos para la app.
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^5.0.0
+  flutter_native_splash: ^2.4.6
+  bloc_test: ^9.1.7
+  mocktail: ^1.0.4
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+  generate: true
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/images/
+    - .env
+  #   - images/a_dot_ham.jpeg
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/to/resolution-aware-images
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/to/asset-from-package
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/to/font-from-package
+
+# --- CONFIGURACIÓN DE FLUTTER NATIVE SPLASH ---
+flutter_native_splash:
+  # El color de fondo que se mostrará mientras carga la app.
+  # Debe coincidir con el fondo de tu tema oscuro para una transición suave.
+  color: "#FFFFFF"
+
+  # La imagen (logo) que se mostrará en el centro.
+  # La ruta debe ser relativa a la raíz del proyecto.
+  image: assets/images/icon_light.png # Imagen original 1080x1080
+  
+  # IMPORTANTE: fullscreen: false evita que la imagen se estire a pantalla completa
+  fullscreen: false
+  
+  # Configuración de tamaño de la imagen (en dp para Android)
+  android_gravity: center
+  
+  # Para Android 12+, puedes definir un color de fondo y un logo separados.
+  # Es una buena práctica para la compatibilidad.
+  color_dark: "#000000"
+  image_dark: assets/images/icon_light.png
+
+  # Configuración específica de Android
+  android_12:
+    color: "#FFFFFF"
+    image: assets/images/icon_light.png
+    color_dark: "#000000"
+    image_dark: assets/images/icon_light.png
+    # Limita el tamaño del icono en Android 12+ (se recomienda 288dp o 240dp)
+    icon_background_color: "#FFFFFF"
+    icon_background_color_dark: "#000000"
+
+  # Opcional: Para evitar que la imagen se estire en pantallas grandes,
+  # puedes usar 'branding' para poner el logo en la parte inferior.
+  # branding: assets/images/branding.png
+
+  # Configuración para la web (si la usas)
+  web: false
+
+# --- CONFIGURACIÓN DE ICONOS DE LA APP ---
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app_icon.png" # Debes crear este archivo (1024x1024 px)
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/app_icon_foreground.png" # Para Android 8+
+  
+  # Opcional: Iconos para diferentes plataformas
+  # min_sdk_android: 21
