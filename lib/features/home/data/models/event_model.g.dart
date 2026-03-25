@@ -10,6 +10,7 @@ _EventModel _$EventModelFromJson(Map<String, dynamic> json) => _EventModel(
   id: json['id'] as String,
   title: json['title'] as String,
   description: json['description'] as String?,
+  slug: json['slug'] as String?,
   startDatetime: DateTime.parse(json['startDatetime'] as String),
   endDatetime: json['endDatetime'] == null
       ? null
@@ -53,6 +54,7 @@ Map<String, dynamic> _$EventModelToJson(_EventModel instance) =>
       'id': instance.id,
       'title': instance.title,
       'description': instance.description,
+      'slug': instance.slug,
       'startDatetime': instance.startDatetime.toIso8601String(),
       'endDatetime': instance.endDatetime?.toIso8601String(),
       'price': instance.price,

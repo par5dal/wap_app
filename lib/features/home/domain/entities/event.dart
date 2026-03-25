@@ -25,6 +25,7 @@ class Event extends Equatable {
   final String id;
   final String title;
   final String? description;
+  final String? slug;
   final DateTime startDate;
   final DateTime? endDate;
   final double latitude;
@@ -51,6 +52,7 @@ class Event extends Equatable {
     required this.id,
     required this.title,
     this.description,
+    this.slug,
     required this.startDate,
     this.endDate,
     required this.latitude,
@@ -79,6 +81,7 @@ class Event extends Equatable {
     id,
     title,
     description,
+    slug,
     startDate,
     endDate,
     latitude,
@@ -104,6 +107,7 @@ class Event extends Equatable {
     String? id,
     String? title,
     String? description,
+    String? slug,
     DateTime? startDate,
     DateTime? endDate,
     double? latitude,
@@ -130,6 +134,7 @@ class Event extends Equatable {
       id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,
+      slug: slug ?? this.slug,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
       latitude: latitude ?? this.latitude,

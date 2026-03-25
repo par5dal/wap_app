@@ -15,6 +15,7 @@ import 'package:wap_app/core/theme/app_colors.dart';
 import 'package:wap_app/core/utils/extensions.dart';
 import 'package:wap_app/features/home/domain/entities/event.dart';
 import 'package:wap_app/features/home/domain/usecases/get_event_by_id.dart';
+import 'package:wap_app/features/home/domain/usecases/record_event_view.dart';
 import 'package:wap_app/features/home/presentation/bloc/home_bloc.dart';
 import 'package:wap_app/features/promoter_profile/domain/usecases/get_promoter_profile.dart';
 import 'package:wap_app/features/promoter_profile/presentation/pages/promoter_profile_page.dart';
@@ -55,6 +56,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
     _loadFullEventData();
     _loadPromoterFollowState();
     _loadFavoriteState();
+    di.sl<RecordEventViewUseCase>().call(widget.event.id);
     di.sl<AnalyticsService>().logViewEvent(
       eventId: widget.event.id,
       eventName: widget.event.title,
@@ -265,7 +267,8 @@ class _EventDetailPageState extends State<EventDetailPage> {
   }
 
   Future<void> _onShare() async {
-    final url = 'https://www.whataplan.net/es/eventos/${_displayEvent.id}';
+    final eventSlug = _displayEvent.slug ?? _displayEvent.id;
+    final url = 'https://www.whataplan.net/es/eventos/$eventSlug';
     // iOS necesita sharePositionOrigin para anclar el popover del share sheet.
     // Usamos el RenderBox del botón para obtener su posición y tamaño reales.
     final box =

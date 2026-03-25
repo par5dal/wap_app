@@ -16,6 +16,7 @@ sealed class EventModel with _$EventModel {
     required String id,
     required String title,
     String? description,
+    String? slug,
     required DateTime startDatetime,
     DateTime? endDatetime,
     String? price,
@@ -50,14 +51,8 @@ sealed class EventModel with _$EventModel {
         id: json['id'] as String,
         title: json['title'] as String,
         description: json['description'] as String?,
+        slug: json['slug'] as String?,
         startDatetime: DateTime.parse(json['start_datetime'] as String),
-        endDatetime: json['end_datetime'] != null
-            ? DateTime.parse(json['end_datetime'] as String)
-            : null,
-        price: json['price']?.toString(),
-        currency: json['currency'] as String?,
-        status: null,
-        moderationStatus: null,
         moderationComment: null,
         moderatedAt: null,
         venue: VenueModel(
@@ -122,6 +117,7 @@ sealed class EventModel with _$EventModel {
       id: json['id'] as String,
       title: json['title'] as String,
       description: json['description'] as String?,
+      slug: json['slug'] as String?,
       startDatetime: DateTime.parse(json['start_datetime'] as String),
       endDatetime: json['end_datetime'] != null
           ? DateTime.parse(json['end_datetime'] as String)
@@ -170,6 +166,7 @@ sealed class EventModel with _$EventModel {
       'id': id,
       'title': title,
       'description': description,
+      'slug': slug,
       'start_datetime': startDatetime.toIso8601String(),
       'end_datetime': endDatetime?.toIso8601String(),
       'price': price,
@@ -267,6 +264,7 @@ extension EventModelX on EventModel {
       id: id,
       title: title,
       description: description,
+      slug: slug,
       startDate: startDatetime,
       endDate: endDatetime,
       latitude: venue.location.latitude,

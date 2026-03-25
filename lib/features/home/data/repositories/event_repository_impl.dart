@@ -172,4 +172,10 @@ class EventRepositoryImpl implements EventRepository {
       return Left(UnknownFailure(message: e.toString()));
     }
   }
+
+  @override
+  Future<void> recordView(String eventId) async {
+    // Fire-and-forget: errors are silenced in the data source
+    await remoteDataSource.recordView(eventId);
+  }
 }

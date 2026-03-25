@@ -26,6 +26,7 @@ import 'package:wap_app/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:wap_app/presentation/bloc/app/app_bloc.dart';
 import 'package:wap_app/core/services/blocked_users_service.dart';
 import 'package:wap_app/shared/widgets/loading_overlay.dart';
+import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
 import 'dart:math' show cos, sqrt, asin, min;
 
 class HomePage extends StatelessWidget {
@@ -294,14 +295,17 @@ class _HomePageViewState extends State<HomePageView>
 
     final newZoom = position.zoom;
 
+    // Actualizar _currentZoom ANTES del await para que cualquier lectura de
+    // _currentZoom durante la operación asíncrona (p.ej. BlocConsumer listener
+    // llamando setEvents) vea el zoom correcto y no el valor anterior.
+    _currentZoom = newZoom;
+
     // No actualizar clusters si hay un evento seleccionado (card abierto)
     // Esto evita que la card se cierre cuando el usuario mueve ligeramente el mapa
     if (state.selectedEvent == null) {
       // Actualizar zoom en el manual cluster manager
       await _manualClusterManager?.updateZoom(newZoom);
     }
-
-    _currentZoom = newZoom;
 
     // Cancelar el timer anterior si existe
     _mapMoveDebounce?.cancel();
@@ -446,7 +450,9 @@ class _HomePageViewState extends State<HomePageView>
   /// al flujo normal de LoadNearbyEvents.
   Future<void> _refreshMap() async {
     final bloc = context.read<HomeBloc>();
-    // Limpiar caché de tiles para ignorar datos locales y pedir datos frescos
+    // Limpiar caché HTTP (Hive) para forzar peticiones reales al servidor
+    await sl<HiveCacheStore>().clean();
+    // Limpiar caché de tiles en memoria
     bloc.tileProvider?.clearCache();
     final bounds = await _getVisibleMapBounds();
     if (!mounted) return;
@@ -877,6 +883,7 @@ class _MapRefreshButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) return const SizedBox.shrink();
     return Material(
       shape: const CircleBorder(),
       elevation: 4,

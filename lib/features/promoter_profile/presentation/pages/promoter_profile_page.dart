@@ -18,6 +18,7 @@ import 'package:wap_app/presentation/bloc/app/app_bloc.dart';
 import 'package:wap_app/core/services/blocked_users_service.dart';
 import 'package:wap_app/features/user_actions/domain/usecases/block_user.dart';
 import 'package:wap_app/features/user_actions/domain/usecases/unblock_user.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:wap_app/shared/widgets/custom_button.dart';
 import 'package:wap_app/shared/widgets/follow_button.dart';
 import 'package:wap_app/shared/widgets/report_dialog.dart';
@@ -41,6 +42,9 @@ class _PromoterProfilePageState extends State<PromoterProfilePage>
   String? _errorMessage;
 
   late TabController _tabController;
+
+  // GlobalKey para obtener la posición del botón compartir (iOS requiere sharePositionOrigin)
+  final _shareButtonKey = GlobalKey();
 
   @override
   void initState() {
@@ -121,13 +125,11 @@ class _PromoterProfilePageState extends State<PromoterProfilePage>
           setState(() => _isLoadingEvents = false);
         },
         (events) {
-          final now = DateTime.now();
           final upcoming = <Event>[];
           final past = <Event>[];
 
           for (final event in events) {
-            final isFinished =
-                event.status == 'FINISHED' || event.startDate.isBefore(now);
+            final isFinished = event.status == 'FINISHED';
             if (isFinished) {
               past.add(event);
             } else {
@@ -175,6 +177,22 @@ class _PromoterProfilePageState extends State<PromoterProfilePage>
       if (!mounted) return;
       setState(() => _isLoadingEvents = false);
     }
+  }
+
+  Future<void> _onShare() async {
+    final promoterId = widget.promoterId;
+    final url = 'https://www.whataplan.net/es/promotores/$promoterId';
+    final name = _profile?.fullName ?? '';
+    final box =
+        _shareButtonKey.currentContext?.findRenderObject() as RenderBox?;
+    final sharePositionOrigin = box != null
+        ? box.localToGlobal(Offset.zero) & box.size
+        : null;
+    await Share.share(
+      name.isNotEmpty ? '¡Mira este promotor en WAP! - $name\n$url' : url,
+      subject: name,
+      sharePositionOrigin: sharePositionOrigin,
+    );
   }
 
   Future<void> _launchUrl(String url) async {
@@ -430,13 +448,33 @@ class _PromoterProfilePageState extends State<PromoterProfilePage>
 
                 const SizedBox(height: 24),
 
-                // BotÃ³n seguir
+                // Botón compartir + seguir
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: FollowButton(
-                    promoterId: _profile!.id,
-                    initialIsFollowing: _profile!.isFollowing,
-                    onToggled: _loadProfile,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      OutlinedButton(
+                        key: _shareButtonKey,
+                        onPressed: _onShare,
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size(48, 48),
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Icon(Icons.share_outlined),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: FollowButton(
+                          promoterId: _profile!.id,
+                          initialIsFollowing: _profile!.isFollowing,
+                          onToggled: _loadProfile,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
 

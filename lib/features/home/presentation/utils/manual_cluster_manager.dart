@@ -52,6 +52,7 @@ class ManualClusterManager {
   double _getClusteringDistanceKm(double zoom) {
     if (zoom < 4) return 500.0; // Vista continental
     if (zoom < 5) return 150.0; // Comunidad autónoma
+    if (zoom < 8) return 50.0; // Provincia (~50km)
     if (zoom < 12) return 10.0; // Ciudad (~10km)
     if (zoom < 14) return 2.0; // Barrio (~2km)
     return 0.0; // Individual (zoom 14+)
@@ -291,6 +292,7 @@ class ManualClusterManager {
   String _getZoomRange(double zoom) {
     if (zoom < 4) return 'country';
     if (zoom < 5) return 'region';
+    if (zoom < 8) return 'province';
     if (zoom < 12) return 'city';
     if (zoom < 14) return 'neighborhood';
     return 'individual';

@@ -220,9 +220,17 @@ final goRouter = GoRouter(
     ),
     GoRoute(
       name: AppRoute.eventDetailDirect.name,
-      path: '/event-detail',
+      path: '/event-detail/:id',
       builder: (context, state) {
-        final event = state.extra as Event;
+        final id = state.pathParameters['id']!;
+        final event = state.extra as Event?;
+        // extra es efímero en GoRouter: se pierde cuando GoRouterRefreshStream
+        // reconstruye las rutas (p.ej. al cambiar el estado de auth).
+        // Si ocurre, recargamos el evento desde la API con EventDetailLoaderPage
+        // usando el ID que sí está persistido en la URL.
+        if (event == null) {
+          return EventDetailLoaderPage(eventId: id);
+        }
         return EventDetailPage(event: event);
       },
     ),

@@ -34,6 +34,7 @@ import 'package:wap_app/features/home/domain/repositories/event_repository.dart'
 import 'package:wap_app/features/home/domain/usecases/get_nearby_events.dart';
 import 'package:wap_app/features/home/domain/usecases/get_events_for_map_bounds.dart';
 import 'package:wap_app/features/home/domain/usecases/get_event_by_id.dart';
+import 'package:wap_app/features/home/domain/usecases/record_event_view.dart';
 import 'package:wap_app/features/home/presentation/bloc/home_bloc.dart';
 import 'package:wap_app/features/home/presentation/providers/event_tile_provider.dart';
 
@@ -122,6 +123,7 @@ Future<void> initDI() async {
 
   final tempDir = await getTemporaryDirectory();
   final cacheStore = HiveCacheStore(tempDir.path);
+  sl.registerSingleton<HiveCacheStore>(cacheStore);
 
   sl.registerLazySingleton<FlutterSecureStorage>(
     () => const FlutterSecureStorage(),
@@ -152,7 +154,7 @@ Future<void> initDI() async {
     final cacheOptions = CacheOptions(
       store: cacheStore,
       policy: CachePolicy.request,
-      maxStale: const Duration(minutes: 30),
+      maxStale: const Duration(minutes: 10),
     );
 
     dio.interceptors.add(DioCacheInterceptor(options: cacheOptions));
@@ -280,6 +282,7 @@ Future<void> initDI() async {
   sl.registerLazySingleton(() => GetNearbyEventsUseCase(sl()));
   sl.registerLazySingleton(() => GetEventsForMapBoundsUseCase(sl()));
   sl.registerLazySingleton(() => GetEventByIdUseCase(sl()));
+  sl.registerLazySingleton(() => RecordEventViewUseCase(sl()));
 
   // BLoCs (Factory)
   sl.registerFactory(

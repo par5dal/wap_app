@@ -37,6 +37,9 @@ abstract class EventRemoteDataSource {
     double? minPrice,
     double? maxPrice,
   });
+
+  /// Registra una visita al evento (POST /events/:id/view → 204 No Content)
+  Future<void> recordView(String eventId);
 }
 
 class EventRemoteDataSourceImpl implements EventRemoteDataSource {
@@ -299,6 +302,20 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
     } catch (e, stackTrace) {
       AppLogger.error('Error in getGridClusters', e, stackTrace);
       throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<void> recordView(String eventId) async {
+    try {
+      await dio.post(
+        '/events/$eventId/view',
+        options: Options(
+          validateStatus: (status) => status == 204 || status == 404,
+        ),
+      );
+    } catch (_) {
+      // Fire-and-forget: silenciar cualquier error de red o servidor
     }
   }
 }

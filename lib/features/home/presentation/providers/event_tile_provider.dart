@@ -42,28 +42,12 @@ class EventTileProvider extends ChangeNotifier {
       _totalTiles > 0 ? (_cachedTiles / _totalTiles) * 100 : 0;
 
   /// Obtiene todos los eventos únicos de todos los tiles cacheados
-  /// FILTRADOS: Solo eventos que no han terminado aún
   List<Event> get allEvents {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-
     // Deduplicar eventos por ID de todos los tiles
     final eventsMap = <String, Event>{};
     for (final tileResponse in _tileCache.values) {
       for (final eventModel in tileResponse.events) {
         final event = eventModel.toEntity();
-
-        // FILTRO: Solo agregar eventos que NO han terminado
-        // Comparar solo la fecha (sin hora) para que eventos de hoy se incluyan
-        final eventEndDate = event.endDate ?? event.startDate;
-        final eventEndDateOnly = DateTime(
-          eventEndDate.year,
-          eventEndDate.month,
-          eventEndDate.day,
-        );
-
-        // El evento NO ha expirado si su fecha de fin es hoy o posterior
-        final isNotExpired = !eventEndDateOnly.isBefore(today);
 
         // Filtrar eventos de promotores bloqueados
         final promoterId = event.promoterId;
@@ -71,7 +55,7 @@ class EventTileProvider extends ChangeNotifier {
             promoterId != null &&
             sl<BlockedUsersService>().isBlocked(promoterId);
 
-        if (isNotExpired && !isBlocked && !eventsMap.containsKey(event.id)) {
+        if (!isBlocked && !eventsMap.containsKey(event.id)) {
           eventsMap[event.id] = event;
         }
       }
@@ -125,9 +109,6 @@ class EventTileProvider extends ChangeNotifier {
 
       // 3. Limpiar caché antiguo (GC)
       _cleanOldCache();
-
-      // 3b. Limpiar tiles con eventos expirados
-      _cleanTilesWithExpiredEvents();
 
       // 4. Filtrar tiles que NO están en caché o están stale
       final now = DateTime.now();
@@ -216,46 +197,6 @@ class EventTileProvider extends ChangeNotifier {
         _tileCache.remove(key);
         _tileCacheTimes.remove(key);
       }
-    }
-  }
-
-  /// Limpia tiles que contienen eventos expirados
-  /// Esto fuerza una recarga de tiles con eventos pasados
-  void _cleanTilesWithExpiredEvents() {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final keysToRemove = <String>[];
-
-    _tileCache.forEach((key, tileResponse) {
-      // Verificar si este tile tiene algún evento expirado
-      for (final eventModel in tileResponse.events) {
-        final event = eventModel.toEntity();
-        final eventEndDate = event.endDate ?? event.startDate;
-        final eventEndDateOnly = DateTime(
-          eventEndDate.year,
-          eventEndDate.month,
-          eventEndDate.day,
-        );
-
-        // Si encontramos un evento expirado, marcar este tile para eliminación
-        if (eventEndDateOnly.isBefore(today)) {
-          keysToRemove.add(key);
-          break; // No necesitamos seguir revisando este tile
-        }
-      }
-    });
-
-    if (keysToRemove.isNotEmpty) {
-      AppLogger.info(
-        '[EventTileProvider] Removing ${keysToRemove.length} tiles with expired events',
-      );
-
-      for (final key in keysToRemove) {
-        _tileCache.remove(key);
-        _tileCacheTimes.remove(key);
-      }
-
-      notifyListeners();
     }
   }
 

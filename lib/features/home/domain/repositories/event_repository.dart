@@ -36,4 +36,7 @@ abstract class EventRepository {
     double? minPrice,
     double? maxPrice,
   });
+
+  /// Registra una visita al evento. Fire-and-forget: nunca falla hacia arriba.
+  Future<void> recordView(String eventId);
 }

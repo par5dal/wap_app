@@ -40,10 +40,12 @@ class _EventDetailLoaderPageState extends State<EventDetailLoaderPage> {
       // pantalla anterior (notificaciones, favoritos, listado…) sin pasar por
       // esta pantalla vacía.
       // Si el stack está vacío (cold-start) usamos go para que «atrás» vaya al home.
+      // El ID del evento se incluye en el path para que GoRouter pueda reconstruir
+      // la ruta correctamente si GoRouterRefreshStream limpia el extra efímero.
       if (context.canPop()) {
-        context.pushReplacement('/event-detail', extra: event);
+        context.pushReplacement('/event-detail/${event.id}', extra: event);
       } else {
-        goRouter.go('/event-detail', extra: event);
+        goRouter.go('/event-detail/${event.id}', extra: event);
       }
     });
   }
