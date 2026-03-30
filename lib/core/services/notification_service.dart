@@ -5,7 +5,6 @@ import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wap_app/core/services/auth_token_service.dart';
 import 'package:wap_app/core/utils/app_logger.dart';
 
 /// Handler de mensajes en background — DEBE ser una función top-level.
@@ -17,15 +16,12 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 class NotificationService {
   final Dio _dio;
-  final AuthTokenService _authTokenService;
   final SharedPreferences _prefs;
 
   NotificationService({
     required Dio dio,
-    required AuthTokenService authTokenService,
     required SharedPreferences sharedPreferences,
   }) : _dio = dio,
-       _authTokenService = authTokenService,
        _prefs = sharedPreferences;
 
   static const _supportedLangs = ['es', 'en', 'pt'];
@@ -138,31 +134,9 @@ class NotificationService {
         return;
       }
 
-      // Esperar a que el interceptor haya completado el refresh proactivo
-      // y el accessToken esté disponible en memoria antes de hacer el PATCH.
-      // Sin esto el backend recibe la petición sin Bearer y devuelve 403.
-      await _waitForAccessToken();
       await _patchToken(token);
     } catch (e) {
       AppLogger.warning('⚠️ FCM registerToken error: $e');
-    }
-  }
-
-  /// Espera (máx. 10 s) a que el accessToken esté disponible en memoria.
-  /// El interceptor Dio realiza el refresh proactivo de forma asíncrona;
-  /// si lanzamos el PATCH antes de que termine, no hay Bearer en la cabecera.
-  Future<void> _waitForAccessToken() async {
-    const maxWait = Duration(seconds: 10);
-    const interval = Duration(milliseconds: 200);
-    var elapsed = Duration.zero;
-    while (_authTokenService.accessToken == null && elapsed < maxWait) {
-      await Future<void>.delayed(interval);
-      elapsed += interval;
-    }
-    if (_authTokenService.accessToken == null) {
-      AppLogger.warning(
-        '⚠️ FCM: accessToken sigue null tras esperar ${maxWait.inSeconds}s',
-      );
     }
   }
 
@@ -174,14 +148,8 @@ class NotificationService {
 
   Future<void> _patchToken(String? token) async {
     try {
-      // Leer el accessToken en el momento exacto del envío para añadirlo
-      // explícitamente en las Options. El DioInterceptor también lo añadirá,
-      // pero este es el último recurso para evitar problemas de timing en
-      // los que el interceptor podría enviarlo sin el header Authorization.
-      final accessToken = _authTokenService.accessToken;
-      AppLogger.info(
-        '🔑 FCM PATCH: accessToken ${accessToken != null ? 'disponible ✓' : 'NULL ✗ → el backend rechazará con 403'}',
-      );
+      // DioInterceptor añade automáticamente el header Authorization con el
+      // Firebase ID token, no es necesario manejarlo explícitamente aquí.
       final lang = token != null ? _resolveBackendLang() : null;
       final theme = token != null ? _resolveBackendTheme() : null;
       await _dio.patch(
@@ -191,9 +159,6 @@ class NotificationService {
           if (lang != null) 'lang': lang,
           if (theme != null) 'theme': theme,
         },
-        options: accessToken != null
-            ? Options(headers: {'Authorization': 'Bearer $accessToken'})
-            : null,
       );
       AppLogger.info(
         '✅ FCM token ${token == null ? 'desregistrado' : 'registrado'} en backend${lang != null ? ' (lang: $lang, theme: $theme)' : ''}',

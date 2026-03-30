@@ -229,6 +229,8 @@
     "toolbarDiscoverCategoriesSubtitle": "Explore plans organized by type",
     "toolbarDiscoverPromoters": "Promoters Directory",
     "toolbarDiscoverPromotersSubtitle": "Meet the plan organizers",
+    "toolbarDiscoverPromoterAccess": "Promoter Access",
+    "toolbarDiscoverPromoterAccessSubtitle": "Create and manage your plans on WAP",
 
     "promotersTitle": "Promoters Directory",
     "promotersSearchHint": "Search promoters...",

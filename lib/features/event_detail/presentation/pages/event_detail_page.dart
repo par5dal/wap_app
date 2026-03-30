@@ -145,7 +145,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
 
     try {
       final getEventById = di.sl<GetEventByIdUseCase>();
-      final result = await getEventById(widget.event.id);
+      final result = await getEventById(widget.event.slug ?? widget.event.id);
 
       if (!mounted) return;
 

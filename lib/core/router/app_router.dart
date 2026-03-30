@@ -17,7 +17,6 @@ import 'package:wap_app/features/discovery/presentation/pages/category_events_pa
 import 'package:wap_app/features/discovery/data/models/category_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:wap_app/features/discovery/presentation/pages/promoters_directory_page.dart';
-import 'package:wap_app/features/auth/presentation/pages/auth_callback_page.dart';
 import 'package:wap_app/features/event_detail/presentation/pages/event_detail_loader_page.dart';
 import 'package:wap_app/features/event_detail/presentation/pages/event_detail_page.dart';
 import 'package:wap_app/features/home/domain/entities/event.dart';
@@ -34,7 +33,6 @@ import 'package:wap_app/presentation/pages/suspended_page.dart';
 enum AppRoute {
   splash,
   auth,
-  authCallback,
   home,
   profile,
   settings,
@@ -103,42 +101,6 @@ final goRouter = GoRouter(
           builder: (context, state) => const UnifiedAuthPage(),
         ),
       ],
-    ),
-    // authCallback está fuera del ShellRoute para evitar Duplicate GlobalKey
-    // cuando GoRouter procesa el intent wap:// y app_links navega simultáneamente.
-    GoRoute(
-      name: AppRoute.authCallback.name,
-      path: '/auth/callback',
-      builder: (context, state) {
-        final extra = state.extra as Map<String, dynamic>?;
-
-        // Intenta obtener los tokens del extra (enviado por app_links listener)
-        String accessToken = extra?['access_token'] as String? ?? '';
-        String refreshToken = extra?['refresh_token'] as String? ?? '';
-        String provider = extra?['provider'] as String? ?? 'google';
-
-        // Si extra está vacío, GoRouter procesó el intent directamente:
-        // extrae los tokens del fragment del URI (access_token=...&refresh_token=...)
-        if (accessToken.isEmpty) {
-          final fragment = state.uri.fragment;
-          if (fragment.isNotEmpty) {
-            final params = Uri.splitQueryString(fragment);
-            accessToken = params['access_token'] ?? '';
-            refreshToken = params['refresh_token'] ?? '';
-          }
-          // El provider puede venir en los query params de la URI
-          provider = state.uri.queryParameters['provider'] ?? 'google';
-        }
-
-        return BlocProvider(
-          create: (_) => sl<AuthBloc>(),
-          child: AuthCallbackPage(
-            supabaseAccessToken: accessToken,
-            supabaseRefreshToken: refreshToken,
-            provider: provider,
-          ),
-        );
-      },
     ),
     GoRoute(
       name: AppRoute.home.name,

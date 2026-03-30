@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:app_links/app_links.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:wap_app/l10n/app_localizations.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:wap_app/core/router/app_router.dart';
@@ -148,8 +147,10 @@ void _initNotificationListeners() {
 
     final type = message.data['type'];
     final eventId = message.data['event_id'];
+    final eventSlug = message.data['slug'] as String?;
+    final eventTarget = eventSlug?.isNotEmpty == true ? eventSlug : eventId;
     final hasEventTarget =
-        type == 'new_event' && eventId != null && eventId.isNotEmpty;
+        type == 'new_event' && eventTarget != null && eventTarget.isNotEmpty;
 
     scaffoldMessengerKey.currentState?.showSnackBar(
       SnackBar(
@@ -180,7 +181,7 @@ void _initNotificationListeners() {
                     // No ID in payload — at least refresh so badge clears
                     di.sl<NotificationsBloc>().add(const RefreshUnreadCount());
                   }
-                  goRouter.push('/events/$eventId');
+                  goRouter.push('/events/$eventTarget');
                 },
               )
             : null,
@@ -196,26 +197,23 @@ void _initNotificationListeners() {
 
     final type = message.data['type'];
     final eventId = message.data['event_id'];
-    if (type == 'new_event' && eventId != null && eventId.isNotEmpty) {
-      goRouter.push('/events/$eventId');
+    final eventSlug = message.data['slug'] as String?;
+    final eventTarget = eventSlug?.isNotEmpty == true ? eventSlug : eventId;
+    if (type == 'new_event' && eventTarget != null && eventTarget.isNotEmpty) {
+      goRouter.push('/events/$eventTarget');
     } else {
       goRouter.go('/home');
     }
   });
 }
 
-/// Configura el listener de deep links para capturar el callback OAuth de Google.
-/// Supabase redirige a [deepLinkScheme]://auth/callback#access_token=...&refresh_token=...
+/// Configura el listener de deep links para capturar eventos compartidos.
 void _initDeepLinkListener() {
   final appLinks = AppLinks();
   appLinks.uriLinkStream.listen(
     (uri) async {
       AppLogger.info('🔗 Deep link recibido: $uri');
-      // Deriva el host del callback desde API_BASE_URL del .env
-      final apiBaseUrl = dotenv.env['API_BASE_URL'] ?? '';
-      final apiHost = Uri.tryParse(apiBaseUrl)?.host ?? '';
-      // Acepta tanto https://{API_HOST}/auth/callback como wap://auth/callback
-      // Deep link: evento compartido (https://www.whataplan.net/{lang}/eventos/{slug})
+      // Eventos compartidos: https://www.whataplan.net/{lang}/eventos/{slug}
       final isEventLink =
           (uri.host == 'whataplan.net' || uri.host == 'www.whataplan.net') &&
           uri.pathSegments.length == 3 &&
@@ -225,49 +223,7 @@ void _initDeepLinkListener() {
         AppLogger.info('🔗 Deep link evento: $eventSlug');
         await Future<void>.delayed(const Duration(milliseconds: 300));
         goRouter.go('/events/$eventSlug');
-        return;
       }
-
-      final isOAuthCallback =
-          (uri.host == apiHost && uri.path == '/auth/callback') ||
-          (uri.host == 'whataplan.net' && uri.path == '/auth/callback') ||
-          (uri.scheme == 'wap' && uri.path == '/callback');
-      if (!isOAuthCallback) return;
-
-      // Los tokens pueden venir en el fragment (#) si Supabase redirige directamente,
-      // o en los query params (?) si vienen del endpoint mobile-callback del backend.
-      final Map<String, String> tokenParams = uri.fragment.isNotEmpty
-          ? Uri.splitQueryString(uri.fragment)
-          : uri.queryParameters;
-
-      final accessToken = tokenParams['access_token'];
-      final refreshToken = tokenParams['refresh_token'];
-
-      if (accessToken == null || refreshToken == null) {
-        AppLogger.warning(
-          '⚠️ Deep link de auth sin tokens: ${uri.fragment.isNotEmpty ? uri.fragment : uri.query}',
-        );
-        return;
-      }
-
-      // El proveedor viene en los query params del URI (e.g. ?provider=apple)
-      final provider = uri.queryParameters['provider'] ?? 'google';
-
-      // Pequeño delay para que el widget tree esté listo tras volver
-      // del navegador (el engine puede estar aún reconstruyendo la UI).
-      await Future<void>.delayed(const Duration(milliseconds: 300));
-      await closeInAppWebView();
-
-      // goNamed reemplaza el stack completo → sobrescribe cualquier estado
-      // de error que GoRouter mostrara al procesar el intent wap:// directamente.
-      goRouter.goNamed(
-        AppRoute.authCallback.name,
-        extra: <String, dynamic>{
-          'access_token': accessToken,
-          'refresh_token': refreshToken,
-          'provider': provider,
-        },
-      );
     },
     onError: (e) =>
         AppLogger.error('Error en deep link listener', e, StackTrace.current),

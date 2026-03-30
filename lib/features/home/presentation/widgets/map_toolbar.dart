@@ -11,6 +11,7 @@ import 'package:wap_app/features/notifications/presentation/bloc/notifications_b
 import 'package:wap_app/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:wap_app/presentation/bloc/app/app_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MapToolbar extends StatelessWidget {
   final VoidCallback onListTap;
@@ -176,7 +177,23 @@ class MapToolbar extends StatelessWidget {
                   context.push('/promoters');
                 },
               ),
-              const SizedBox(height: 16), // Reducido de 24 a 16
+              const SizedBox(height: 12),
+              _DiscoveryOption(
+                icon: Icons.store_outlined,
+                title: context.l10n.toolbarDiscoverPromoterAccess,
+                subtitle: context.l10n.toolbarDiscoverPromoterAccessSubtitle,
+                onTap: () async {
+                  Navigator.pop(context);
+                  final locale = Localizations.localeOf(context).languageCode;
+                  final url = Uri.parse(
+                    'https://www.whataplan.net/$locale/for-promoters',
+                  );
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url, mode: LaunchMode.externalApplication);
+                  }
+                },
+              ),
+              const SizedBox(height: 16),
             ],
           ),
         ),

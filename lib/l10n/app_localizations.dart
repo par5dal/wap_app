@@ -1282,6 +1282,18 @@ abstract class AppLocalizations {
   /// **'Conoce a los organizadores de planes'**
   String get toolbarDiscoverPromotersSubtitle;
 
+  /// No description provided for @toolbarDiscoverPromoterAccess.
+  ///
+  /// In es, this message translates to:
+  /// **'Acceso para Promotores'**
+  String get toolbarDiscoverPromoterAccess;
+
+  /// No description provided for @toolbarDiscoverPromoterAccessSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Crea y gestiona tus planes en WAP'**
+  String get toolbarDiscoverPromoterAccessSubtitle;
+
   /// No description provided for @promotersTitle.
   ///
   /// In es, this message translates to:

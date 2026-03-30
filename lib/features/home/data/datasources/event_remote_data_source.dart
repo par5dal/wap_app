@@ -118,7 +118,7 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
   @override
   Future<EventModel> getEventById(String eventId) async {
     try {
-      final response = await dio.get('/events/public/$eventId');
+      final response = await dio.get('/events/eventos/$eventId');
 
       // 304 Not Modified significa que la caché es válida
       if (response.statusCode == 200 || response.statusCode == 304) {

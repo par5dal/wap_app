@@ -626,6 +626,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get toolbarDiscoverPromotersSubtitle => 'Meet the plan organizers';
 
   @override
+  String get toolbarDiscoverPromoterAccess => 'Promoter Access';
+
+  @override
+  String get toolbarDiscoverPromoterAccessSubtitle =>
+      'Create and manage your plans on WAP';
+
+  @override
   String get promotersTitle => 'Promoters Directory';
 
   @override

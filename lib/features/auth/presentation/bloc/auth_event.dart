@@ -37,31 +37,3 @@ class GoogleSignInPressed extends AuthEvent {
 class AppleSignInPressed extends AuthEvent {
   const AppleSignInPressed();
 }
-
-/// Emitido desde main.dart cuando llega el deep link del callback OAuth de Google.
-class GoogleCallbackReceived extends AuthEvent {
-  final String supabaseAccessToken;
-  final String supabaseRefreshToken;
-
-  const GoogleCallbackReceived({
-    required this.supabaseAccessToken,
-    required this.supabaseRefreshToken,
-  });
-
-  @override
-  List<Object> get props => [supabaseAccessToken, supabaseRefreshToken];
-}
-
-/// Emitido desde main.dart cuando llega el deep link del callback OAuth de Apple.
-class AppleCallbackReceived extends AuthEvent {
-  final String supabaseAccessToken;
-  final String supabaseRefreshToken;
-
-  const AppleCallbackReceived({
-    required this.supabaseAccessToken,
-    required this.supabaseRefreshToken,
-  });
-
-  @override
-  List<Object> get props => [supabaseAccessToken, supabaseRefreshToken];
-}

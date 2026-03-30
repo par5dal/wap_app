@@ -21,7 +21,7 @@ void main() {
 
   const tEmail = 'test@example.com';
   const tPassword = 'password123';
-  final tToken = TokenEntity(accessToken: 'access', refreshToken: 'refresh');
+  final tToken = const TokenEntity();
 
   test('should return TokenEntity when repository succeeds', () async {
     when(

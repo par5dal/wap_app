@@ -21,7 +21,7 @@ void main() {
   });
 
   const tEventId = 'event-123';
-  const tUserId = 'user-456';
+  const tUserId = 'Xp4nQ8mRqL2wKzYvJ5cE9bFdAh6T';
   const tReason = 'SPAM';
   const tDescription = 'Hay contenido inapropiado';
 

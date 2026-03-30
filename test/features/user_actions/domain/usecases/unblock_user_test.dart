@@ -18,7 +18,7 @@ void main() {
     useCase = UnblockUserUseCase(mockRepository);
   });
 
-  const tUserId = 'user-123';
+  const tUserId = 'WG2qFrMKp9XzA3nT8eCvLmBsYd7';
 
   test('returns Right(null) when repository succeeds', () async {
     when(

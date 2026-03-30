@@ -24,6 +24,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   // PermissionRequestInProgressException if two requests overlap).
   Future<LocationPermission>? _permissionRequest;
 
+  // Guard against concurrent LoadNearbyEvents executions. If a load is already
+  // in progress, additional events are dropped until it completes.
+  bool _loadNearbyEventsInProgress = false;
+
   HomeBloc({
     required this.getNearbyEvents,
     required this.getEventsForMapBounds,
@@ -48,6 +52,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     LoadNearbyEvents event,
     Emitter<HomeState> emit,
   ) async {
+    // Drop duplicate concurrent loads — iOS Geolocator throws
+    // PermissionRequestInProgressException if two calls overlap.
+    if (_loadNearbyEventsInProgress) {
+      AppLogger.info(
+        '[HomeBloc] LoadNearbyEvents already in progress, skipping.',
+      );
+      return;
+    }
+    _loadNearbyEventsInProgress = true;
     emit(state.copyWith(isLoading: true, errorMessage: null));
 
     try {
@@ -293,6 +306,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           );
         }
       }
+    } finally {
+      _loadNearbyEventsInProgress = false;
     }
   }
 

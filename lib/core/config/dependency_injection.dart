@@ -15,15 +15,12 @@ import 'package:wap_app/features/auth/data/repositories/auth_repository_impl.dar
 import 'package:wap_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:wap_app/features/auth/domain/usecases/get_auth_status.dart';
 import 'package:wap_app/features/auth/domain/usecases/login_user.dart';
-import 'package:wap_app/features/auth/domain/usecases/get_google_auth_url.dart';
 import 'package:wap_app/features/auth/domain/usecases/login_with_google.dart';
-import 'package:wap_app/features/auth/domain/usecases/get_apple_auth_url.dart';
 import 'package:wap_app/features/auth/domain/usecases/login_with_apple.dart';
 import 'package:wap_app/features/auth/domain/usecases/register_user.dart';
 import 'package:wap_app/features/auth/domain/usecases/logout_user.dart';
 import 'package:wap_app/features/auth/domain/usecases/check_email_exists.dart';
 import 'package:wap_app/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:wap_app/core/services/auth_token_service.dart';
 
 // EVENTS Feature
 import 'package:wap_app/features/home/data/datasources/event_remote_data_source.dart';
@@ -129,8 +126,6 @@ Future<void> initDI() async {
     () => const FlutterSecureStorage(),
   );
 
-  sl.registerLazySingleton<AuthTokenService>(() => AuthTokenService());
-
   // Analytics
   sl.registerLazySingleton<AnalyticsService>(
     () => AnalyticsService(FirebaseAnalytics.instance),
@@ -183,11 +178,7 @@ Future<void> initDI() async {
 
   // DataSources
   sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(
-      dio: sl(),
-      secureStorage: sl(),
-      tokenService: sl(),
-    ),
+    () => AuthRemoteDataSourceImpl(dio: sl()),
   );
 
   // Repositories
@@ -199,11 +190,7 @@ Future<void> initDI() async {
   // GLOBAL BLoCs (Tercero - necesita AuthRepository)
   // ========================================
   sl.registerLazySingleton(
-    () => NotificationService(
-      dio: sl(),
-      authTokenService: sl(),
-      sharedPreferences: sl(),
-    ),
+    () => NotificationService(dio: sl(), sharedPreferences: sl()),
   );
   sl.registerLazySingleton(
     () => AppBloc(authRepository: sl(), notificationService: sl()),
@@ -216,12 +203,7 @@ Future<void> initDI() async {
   // ========================================
   // Ahora que AppBloc existe, añadimos el interceptor de autenticación
   sl<Dio>().interceptors.add(
-    DioInterceptor(
-      dio: sl(),
-      secureStorage: sl(),
-      appBloc: sl(),
-      tokenService: sl(),
-    ),
+    DioInterceptor(dio: sl(), appBloc: sl()),
   );
 
   // ========================================
@@ -230,24 +212,19 @@ Future<void> initDI() async {
 
   // UseCases
   sl.registerLazySingleton(() => LoginUser(sl()));
-  sl.registerLazySingleton(() => GetAuthStatusUseCase(sl()));
+  sl.registerLazySingleton(() => GetAuthStatusUseCase());
   sl.registerLazySingleton(() => RegisterUserUseCase(sl()));
-  sl.registerLazySingleton(() => GetGoogleAuthUrlUseCase(sl()));
-  sl.registerLazySingleton(() => LoginWithGoogleCallbackUseCase(sl()));
-  sl.registerLazySingleton(() => GetAppleAuthUrlUseCase(sl()));
-  sl.registerLazySingleton(() => LoginWithAppleCallbackUseCase(sl()));
+  sl.registerLazySingleton(() => LoginWithGoogleUseCase(sl()));
+  sl.registerLazySingleton(() => LoginWithAppleUseCase(sl()));
   sl.registerLazySingleton(() => LogoutUserUseCase(sl()));
   sl.registerLazySingleton(() => CheckEmailExistsUseCase(sl()));
 
-  // BLoCs (Factory - nueva instancia cada vez)
   sl.registerFactory(
     () => AuthBloc(
       loginUser: sl(),
       registerUser: sl(),
-      getGoogleAuthUrl: sl(),
-      loginWithGoogleCallback: sl(),
-      getAppleAuthUrl: sl(),
-      loginWithAppleCallback: sl(),
+      loginWithGoogle: sl(),
+      loginWithApple: sl(),
       checkEmailExists: sl(),
       appBloc: sl(),
       prefs: sl(),

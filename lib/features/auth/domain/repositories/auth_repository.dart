@@ -15,35 +15,12 @@ abstract class AuthRepository {
     String lastName,
   );
 
-  /// Obtiene la URL de autorización OAuth de Google del backend.
-  Future<Either<Failure, String>> getGoogleAuthUrl({
-    required String lang,
-    String role,
-  });
+  /// Login nativo con Google (sin redirección al navegador).
+  Future<Either<Failure, TokenEntity>> loginWithGoogle();
 
-  /// Intercambia los tokens de Supabase con el backend y devuelve el TokenEntity de la app.
-  Future<Either<Failure, TokenEntity>> loginWithGoogleCallback({
-    required String supabaseAccessToken,
-    required String supabaseRefreshToken,
-    required String lang,
-    String? role,
-  });
+  /// Login nativo con Apple (sin redirección al navegador).
+  Future<Either<Failure, TokenEntity>> loginWithApple();
 
-  /// Obtiene la URL de autorización OAuth de Apple del backend.
-  Future<Either<Failure, String>> getAppleAuthUrl({
-    required String lang,
-    String role,
-  });
-
-  /// Intercambia los tokens de Supabase (Apple) con el backend.
-  Future<Either<Failure, TokenEntity>> loginWithAppleCallback({
-    required String supabaseAccessToken,
-    required String supabaseRefreshToken,
-    required String lang,
-    String? role,
-  });
-
-  Future<Either<Failure, bool>> isAuthenticated();
   Future<Either<Failure, void>> logout();
   Future<Either<Failure, bool>> checkEmailExists(String email);
 

@@ -634,6 +634,13 @@ class AppLocalizationsEs extends AppLocalizations {
       'Conoce a los organizadores de planes';
 
   @override
+  String get toolbarDiscoverPromoterAccess => 'Acceso para Promotores';
+
+  @override
+  String get toolbarDiscoverPromoterAccessSubtitle =>
+      'Crea y gestiona tus planes en WAP';
+
+  @override
   String get promotersTitle => 'Directorio de Promotores';
 
   @override

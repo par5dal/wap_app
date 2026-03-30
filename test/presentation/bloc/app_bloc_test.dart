@@ -5,7 +5,6 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:wap_app/core/error/failures.dart';
 import 'package:wap_app/core/services/analytics_service.dart';
 import 'package:wap_app/core/services/app_version_service.dart';
 import 'package:wap_app/core/services/blocked_users_service.dart';
@@ -85,6 +84,7 @@ void main() {
     bloc = AppBloc(
       authRepository: mockAuthRepository,
       notificationService: mockNotificationService,
+      checkAuthSession: () async => false,
     );
   });
 
@@ -96,36 +96,33 @@ void main() {
   group('AppStatusChecked', () {
     blocTest<AppBloc, AppState>(
       'emits [authenticated] when session exists',
-      build: () {
-        when(
-          () => mockAuthRepository.isAuthenticated(),
-        ).thenAnswer((_) async => const Right(true));
-        return bloc;
-      },
+      build: () => AppBloc(
+        authRepository: mockAuthRepository,
+        notificationService: mockNotificationService,
+        checkAuthSession: () async => true,
+      ),
       act: (b) => b.add(AppStatusChecked()),
       expect: () => [const AppState.authenticated()],
     );
 
     blocTest<AppBloc, AppState>(
       'emits [unauthenticated] when no session',
-      build: () {
-        when(
-          () => mockAuthRepository.isAuthenticated(),
-        ).thenAnswer((_) async => const Right(false));
-        return bloc;
-      },
+      build: () => AppBloc(
+        authRepository: mockAuthRepository,
+        notificationService: mockNotificationService,
+        checkAuthSession: () async => false,
+      ),
       act: (b) => b.add(AppStatusChecked()),
       expect: () => [const AppState.unauthenticated()],
     );
 
     blocTest<AppBloc, AppState>(
-      'emits [unauthenticated] when repository returns failure',
-      build: () {
-        when(() => mockAuthRepository.isAuthenticated()).thenAnswer(
-          (_) async => const Left(ServerFailure(message: 'Network error')),
-        );
-        return bloc;
-      },
+      'emits [unauthenticated] when auth check throws',
+      build: () => AppBloc(
+        authRepository: mockAuthRepository,
+        notificationService: mockNotificationService,
+        checkAuthSession: () async => throw Exception('Auth check failed'),
+      ),
       act: (b) => b.add(AppStatusChecked()),
       expect: () => [const AppState.unauthenticated()],
     );
@@ -227,16 +224,15 @@ void main() {
         when(
           () => mockAppVersionService.isUpdateRequired(),
         ).thenAnswer((_) async => true);
-        when(
-          () => mockAuthRepository.isAuthenticated(),
-        ).thenAnswer((_) async => const Right(true));
-        return bloc;
+        return AppBloc(
+          authRepository: mockAuthRepository,
+          notificationService: mockNotificationService,
+          checkAuthSession: () async => true,
+        );
       },
       act: (b) => b.add(AppStatusChecked()),
+      // Only [updateRequired] — no [authenticated] — proves auth check was skipped.
       expect: () => [const AppState.updateRequired()],
-      verify: (_) {
-        verifyNever(() => mockAuthRepository.isAuthenticated());
-      },
     );
 
     blocTest<AppBloc, AppState>(
@@ -245,10 +241,11 @@ void main() {
         when(
           () => mockAppVersionService.isUpdateRequired(),
         ).thenAnswer((_) async => false);
-        when(
-          () => mockAuthRepository.isAuthenticated(),
-        ).thenAnswer((_) async => const Right(false));
-        return bloc;
+        return AppBloc(
+          authRepository: mockAuthRepository,
+          notificationService: mockNotificationService,
+          checkAuthSession: () async => false,
+        );
       },
       act: (b) => b.add(AppStatusChecked()),
       expect: () => [const AppState.unauthenticated()],
@@ -258,12 +255,11 @@ void main() {
   group('BlockedUsersService side effects', () {
     blocTest<AppBloc, AppState>(
       'loads blocked users when session exists on AppStatusChecked',
-      build: () {
-        when(
-          () => mockAuthRepository.isAuthenticated(),
-        ).thenAnswer((_) async => const Right(true));
-        return bloc;
-      },
+      build: () => AppBloc(
+        authRepository: mockAuthRepository,
+        notificationService: mockNotificationService,
+        checkAuthSession: () async => true,
+      ),
       act: (b) => b.add(AppStatusChecked()),
       expect: () => [const AppState.authenticated()],
       verify: (_) {

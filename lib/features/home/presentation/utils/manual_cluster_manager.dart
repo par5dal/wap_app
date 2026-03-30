@@ -31,6 +31,7 @@ class ManualClusterManager {
   List<Event> _events = [];
   double _currentZoom = 14.0;
   Set<Marker> _markers = {};
+  bool _disposed = false;
 
   /// Pixel ratio del dispositivo — configurar desde el widget con MediaQuery
   double pixelRatio = 1.0;
@@ -41,8 +42,14 @@ class ManualClusterManager {
     required this.onClusterTap,
   });
 
+  /// Libera referencias para evitar callbacks sobre widgets destruidos
+  void dispose() {
+    _disposed = true;
+  }
+
   /// Actualiza los eventos y recalcula clusters
   Future<void> setEvents(List<Event> events, double zoom) async {
+    if (_disposed) return;
     _events = events;
     _currentZoom = zoom;
     await _updateClusters();
@@ -90,6 +97,7 @@ class ManualClusterManager {
   /// Divide el espacio en celdas del tamaño del radio y solo comprueba
   /// las 9 celdas propias + adyacentes, evitando el doble bucle O(n²).
   Future<void> _updateClusters() async {
+    if (_disposed) return;
     if (_events.isEmpty) {
       _markers = {};
       onMarkersChanged(_markers);
@@ -274,6 +282,7 @@ class ManualClusterManager {
 
   /// Actualiza el zoom y recalcula clusters si es necesario
   Future<void> updateZoom(double newZoom) async {
+    if (_disposed) return;
     final oldRange = _getZoomRange(_currentZoom);
     final newRange = _getZoomRange(newZoom);
 

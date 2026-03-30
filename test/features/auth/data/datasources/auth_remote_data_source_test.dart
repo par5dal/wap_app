@@ -1,37 +1,23 @@
 // test/features/auth/data/datasources/auth_remote_data_source_test.dart
 
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:wap_app/core/error/app_exception.dart';
-import 'package:wap_app/core/services/auth_token_service.dart';
 import 'package:wap_app/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:wap_app/features/auth/data/models/legal_document_model.dart';
 
 class MockDio extends Mock implements Dio {}
-
-class MockSecureStorage extends Mock implements FlutterSecureStorage {}
-
-class MockAuthTokenService extends Mock implements AuthTokenService {}
 
 class MockResponse extends Mock implements Response {}
 
 void main() {
   late AuthRemoteDataSourceImpl dataSource;
   late MockDio mockDio;
-  late MockSecureStorage mockSecureStorage;
-  late MockAuthTokenService mockTokenService;
 
   setUp(() {
     mockDio = MockDio();
-    mockSecureStorage = MockSecureStorage();
-    mockTokenService = MockAuthTokenService();
-    dataSource = AuthRemoteDataSourceImpl(
-      dio: mockDio,
-      secureStorage: mockSecureStorage,
-      tokenService: mockTokenService,
-    );
+    dataSource = AuthRemoteDataSourceImpl(dio: mockDio);
   });
 
   group('AuthRemoteDataSourceImpl - getLegalDocument', () {

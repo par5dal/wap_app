@@ -52,56 +52,24 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, String>> getGoogleAuthUrl({
-    required String lang,
-    String role = 'CONSUMER',
-  }) async {
+  Future<Either<Failure, TokenEntity>> loginWithGoogle() async {
     try {
-      final url = await remoteDataSource.getGoogleAuthUrl(
-        lang: lang,
-        role: role,
-      );
-      return Right(url);
-    } catch (error, stackTrace) {
-      AppLogger.error('Error getting Google auth URL', error, stackTrace);
-      final failure = ErrorHandler.handleException(error, stackTrace);
-      return Left(failure);
-    }
-  }
-
-  @override
-  Future<Either<Failure, TokenEntity>> loginWithGoogleCallback({
-    required String supabaseAccessToken,
-    required String supabaseRefreshToken,
-    required String lang,
-    String? role,
-  }) async {
-    try {
-      final tokenModel = await remoteDataSource.loginWithGoogleCallback(
-        supabaseAccessToken: supabaseAccessToken,
-        supabaseRefreshToken: supabaseRefreshToken,
-        lang: lang,
-        role: role,
-      );
+      final tokenModel = await remoteDataSource.loginWithGoogle();
       return Right(tokenModel);
     } catch (error, stackTrace) {
-      AppLogger.error('Error during Google callback', error, stackTrace);
+      AppLogger.error('Error durante login con Google', error, stackTrace);
       final failure = ErrorHandler.handleException(error, stackTrace);
       return Left(failure);
     }
   }
 
   @override
-  Future<Either<Failure, bool>> isAuthenticated() async {
+  Future<Either<Failure, TokenEntity>> loginWithApple() async {
     try {
-      final refreshToken = await remoteDataSource.getRefreshToken();
-      if (refreshToken != null && refreshToken.isNotEmpty) {
-        return const Right(true);
-      } else {
-        return const Right(false);
-      }
+      final tokenModel = await remoteDataSource.loginWithApple();
+      return Right(tokenModel);
     } catch (error, stackTrace) {
-      AppLogger.error('Error checking authentication', error, stackTrace);
+      AppLogger.error('Error durante login con Apple', error, stackTrace);
       final failure = ErrorHandler.handleException(error, stackTrace);
       return Left(failure);
     }
@@ -126,46 +94,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Right(exists);
     } catch (error, stackTrace) {
       AppLogger.error('Error checking if email exists', error, stackTrace);
-      final failure = ErrorHandler.handleException(error, stackTrace);
-      return Left(failure);
-    }
-  }
-
-  @override
-  Future<Either<Failure, String>> getAppleAuthUrl({
-    required String lang,
-    String role = 'CONSUMER',
-  }) async {
-    try {
-      final url = await remoteDataSource.getAppleAuthUrl(
-        lang: lang,
-        role: role,
-      );
-      return Right(url);
-    } catch (error, stackTrace) {
-      AppLogger.error('Error getting Apple auth URL', error, stackTrace);
-      final failure = ErrorHandler.handleException(error, stackTrace);
-      return Left(failure);
-    }
-  }
-
-  @override
-  Future<Either<Failure, TokenEntity>> loginWithAppleCallback({
-    required String supabaseAccessToken,
-    required String supabaseRefreshToken,
-    required String lang,
-    String? role,
-  }) async {
-    try {
-      final tokenModel = await remoteDataSource.loginWithAppleCallback(
-        supabaseAccessToken: supabaseAccessToken,
-        supabaseRefreshToken: supabaseRefreshToken,
-        lang: lang,
-        role: role,
-      );
-      return Right(tokenModel);
-    } catch (error, stackTrace) {
-      AppLogger.error('Error during Apple callback', error, stackTrace);
       final failure = ErrorHandler.handleException(error, stackTrace);
       return Left(failure);
     }

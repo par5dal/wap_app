@@ -12,7 +12,36 @@
                     "package_name": "com.jovelupe.wap"
                 }
             },
-            "oauth_client": [],
+            "oauth_client": [
+                {
+                    "client_id": "99666080057-2ii0vf36jubvqt5270vfcfe294nki53b.apps.googleusercontent.com",
+                    "client_type": 1,
+                    "android_info": {
+                        "package_name": "com.jovelupe.wap",
+                        "certificate_hash": "e25f1d055b58c1ca967faa34f1136f887dd3756d"
+                    }
+                },
+                {
+                    "client_id": "99666080057-el7rcjqptb5p3a2rt5q1b3648karbncg.apps.googleusercontent.com",
+                    "client_type": 1,
+                    "android_info": {
+                        "package_name": "com.jovelupe.wap",
+                        "certificate_hash": "ec857bb328781aaae3855f254da10e70cd51d290"
+                    }
+                },
+                {
+                    "client_id": "99666080057-rlkgl4ibka7l4192ueai4vbrsflj89i7.apps.googleusercontent.com",
+                    "client_type": 1,
+                    "android_info": {
+                        "package_name": "com.jovelupe.wap",
+                        "certificate_hash": "0384933a39841b6a36c1becfe603db4f16f18bf3"
+                    }
+                },
+                {
+                    "client_id": "99666080057-qcqqqom2uvmmsds3tmfb89n1u3j71cm1.apps.googleusercontent.com",
+                    "client_type": 3
+                }
+            ],
             "api_key": [
                 {
                     "current_key": "AIzaSyDV07ZyvXDso9vzPMposVS_KWNi8XftvhE"
@@ -20,7 +49,20 @@
             ],
             "services": {
                 "appinvite_service": {
-                    "other_platform_oauth_client": []
+                    "other_platform_oauth_client": [
+                        {
+                            "client_id": "99666080057-qcqqqom2uvmmsds3tmfb89n1u3j71cm1.apps.googleusercontent.com",
+                            "client_type": 3
+                        },
+                        {
+                            "client_id": "99666080057-jrou4452937pf4d0da4hbg4prpsp5fsa.apps.googleusercontent.com",
+                            "client_type": 2,
+                            "ios_info": {
+                                "bundle_id": "com.jovelupe.wap",
+                                "app_store_id": "6759071222"
+                            }
+                        }
+                    ]
                 }
             }
         }

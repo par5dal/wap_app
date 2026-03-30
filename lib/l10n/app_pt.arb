@@ -229,6 +229,8 @@
     "toolbarDiscoverCategoriesSubtitle": "Explore planos organizados por tipo",
     "toolbarDiscoverPromoters": "Diretório de Promotores",
     "toolbarDiscoverPromotersSubtitle": "Conheça os organizadores dos planos",
+    "toolbarDiscoverPromoterAccess": "Acesso para Promotores",
+    "toolbarDiscoverPromoterAccessSubtitle": "Crie e gerencie seus planos no WAP",
 
     "promotersTitle": "Diretório de Promotores",
     "promotersSearchHint": "Buscar promotores...",

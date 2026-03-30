@@ -1,6 +1,7 @@
 // lib/presentation/bloc/app/app_bloc.dart
 
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:wap_app/core/config/dependency_injection.dart';
@@ -10,7 +11,6 @@ import 'package:wap_app/core/services/blocked_users_service.dart';
 import 'package:wap_app/core/services/notification_service.dart';
 import 'package:wap_app/core/services/app_version_service.dart';
 import 'package:wap_app/features/auth/domain/repositories/auth_repository.dart';
-import 'package:wap_app/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:wap_app/presentation/bloc/locale/locale_cubit.dart';
 
 part 'app_event.dart';
@@ -19,12 +19,17 @@ part 'app_state.dart';
 class AppBloc extends Bloc<AppEvent, AppState> {
   final AuthRepository _authRepository;
   final NotificationService _notificationService;
+  final Future<bool> Function() _checkAuthSession;
 
   AppBloc({
     required AuthRepository authRepository,
     required NotificationService notificationService,
+    Future<bool> Function()? checkAuthSession,
   }) : _authRepository = authRepository,
        _notificationService = notificationService,
+       _checkAuthSession =
+           checkAuthSession ??
+           (() async => FirebaseAuth.instance.currentUser != null),
        super(const AppState.unknown()) {
     on<AppStatusChecked>(_onStatusChecked);
     on<AppAuthStatusChanged>(_onAuthStatusChanged);
@@ -44,9 +49,14 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       return;
     }
 
-    // ✅ Siempre checkear si hay sesión guardada
-    final isAuthenticatedResult = await _authRepository.isAuthenticated();
-    final hasLocalSession = isAuthenticatedResult.getOrElse(() => false);
+    // ✅ Comprobar si hay sesión Firebase activa
+    final bool hasLocalSession;
+    try {
+      hasLocalSession = await _checkAuthSession();
+    } catch (_) {
+      emit(const AppState.unauthenticated());
+      return;
+    }
 
     if (hasLocalSession) {
       // Verificar si el usuario tiene los T&C aceptados antes de ir a home.
@@ -98,14 +108,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     await _notificationService.unregisterToken();
     unawaited(sl<AnalyticsService>().logLogout());
     await _authRepository.logout();
-
-    // Resetear el ProfileBloc también
-    try {
-      final profileBloc = sl<ProfileBloc>();
-      profileBloc.add(ProfileReset());
-    } catch (e) {
-      // Si ProfileBloc no está disponible, continuar con el logout
-    }
 
     sl<BlockedUsersService>().clear();
     emit(const AppState.unauthenticated());

@@ -2,23 +2,17 @@
 import 'package:equatable/equatable.dart';
 import 'package:wap_app/features/auth/domain/entities/auth_user_entity.dart';
 
+/// Resultado de autenticación devuelto por POST /auth/session.
+/// No contiene tokens: Firebase SDK gestiona el ID token automáticamente.
 class TokenEntity extends Equatable {
-  final String accessToken;
-  final String refreshToken;
-
-  /// Usuario autenticado devuelto por el backend (login, register, OAuth).
+  /// Usuario autenticado devuelto por el backend.
   final AuthUserEntity? user;
 
-  /// Solo viene en el flujo OAuth cuando el usuario acaba de crearse.
+  /// True si el usuario acaba de crearse (primer acceso).
   final bool isNewUser;
 
-  const TokenEntity({
-    required this.accessToken,
-    required this.refreshToken,
-    this.user,
-    this.isNewUser = false,
-  });
+  const TokenEntity({this.user, this.isNewUser = false});
 
   @override
-  List<Object?> get props => [accessToken, refreshToken, user, isNewUser];
+  List<Object?> get props => [user, isNewUser];
 }

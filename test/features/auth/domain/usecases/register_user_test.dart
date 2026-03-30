@@ -25,11 +25,7 @@ void main() {
     firstName: 'Ana',
     lastName: 'García',
   );
-  final tToken = TokenEntity(
-    accessToken: 'access',
-    refreshToken: 'refresh',
-    isNewUser: true,
-  );
+  final tToken = const TokenEntity(isNewUser: true);
 
   test('should return TokenEntity with isNewUser=true on success', () async {
     when(

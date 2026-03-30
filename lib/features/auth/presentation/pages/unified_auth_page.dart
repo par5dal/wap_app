@@ -1,5 +1,7 @@
 // lib/features/auth/presentation/pages/unified_auth_page.dart
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -343,23 +345,27 @@ class _UnifiedAuthPageState extends State<UnifiedAuthPage> {
             );
           },
         ),
-        const SizedBox(height: 16),
-        BlocBuilder<AuthBloc, AuthState>(
-          builder: (context, state) {
-            final isLoading = state is AuthFormLoading;
-            return CustomButton(
-              text: t.authPageContinueWithApple,
-              type: ButtonType.outlined,
-              isLoading: isLoading,
-              iconWidget: const Icon(Icons.apple, size: 24),
-              onPressed: isLoading
-                  ? null
-                  : () {
-                      context.read<AuthBloc>().add(const AppleSignInPressed());
-                    },
-            );
-          },
-        ),
+        if (Platform.isIOS) ...[
+          const SizedBox(height: 16),
+          BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              final isLoading = state is AuthFormLoading;
+              return CustomButton(
+                text: t.authPageContinueWithApple,
+                type: ButtonType.outlined,
+                isLoading: isLoading,
+                iconWidget: const Icon(Icons.apple, size: 24),
+                onPressed: isLoading
+                    ? null
+                    : () {
+                        context.read<AuthBloc>().add(
+                          const AppleSignInPressed(),
+                        );
+                      },
+              );
+            },
+          ),
+        ],
         const SizedBox(height: 8),
         Center(
           child: TextButton(

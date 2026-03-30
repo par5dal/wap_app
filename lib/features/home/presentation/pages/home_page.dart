@@ -136,6 +136,7 @@ class _HomePageViewState extends State<HomePageView>
   }
 
   void _updateMarkers(Set<Marker> markers) {
+    if (!mounted) return;
     setState(() {
       _markers = markers;
     });
@@ -212,6 +213,7 @@ class _HomePageViewState extends State<HomePageView>
 
   @override
   void dispose() {
+    _manualClusterManager?.dispose();
     sl<BlockedUsersService>().removeListener(_onBlockedUsersServiceChanged);
     WidgetsBinding.instance.removeObserver(this);
     _mapController?.dispose();
