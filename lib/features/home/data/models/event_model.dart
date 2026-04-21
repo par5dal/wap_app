@@ -33,6 +33,7 @@ sealed class EventModel with _$EventModel {
     String?
     promoterDirectId, // promoter_id del tile (cuando no viene objeto promoter completo)
     @Default(false) bool isFavorite, // Si está en favoritos del usuario
+    String? sourceUrl, // URL del origen del evento
     DateTime? createdAt,
     DateTime? updatedAt,
     DateTime? deletedAt,
@@ -46,13 +47,45 @@ sealed class EventModel with _$EventModel {
         !json.containsKey('venue');
 
     if (isClusteringFormat) {
-      // Formato simplificado de /events/clustering/map-points
+      // Formato simplificado de /events/tiles y /events/clustering/map-points
+
+      // Construir categoría principal (primary_category_id puede llegar como int o String)
+      CategoryModel? primaryCategory;
+      if (json['primary_category_slug'] != null) {
+        primaryCategory = CategoryModel(
+          id: json['primary_category_id']?.toString() ?? '',
+          name: json['primary_category_name'] as String? ?? '',
+          slug: json['primary_category_slug'] as String,
+          svg: json['primary_category_icon'] as String?,
+        );
+      }
+
+      // Construir lista completa: categoría principal + secundarias
+      final List<CategoryModel> allCategories = [
+        if (primaryCategory != null) primaryCategory,
+        if (json['secondary_categories'] is List)
+          ...(json['secondary_categories'] as List).map(
+            (cat) => CategoryModel(
+              id: (cat as Map<String, dynamic>)['id']?.toString() ?? '',
+              name: cat['name'] as String? ?? '',
+              slug: cat['slug'] as String? ?? '',
+              svg: cat['svg'] as String?,
+            ),
+          ),
+      ];
+
       return EventModel(
         id: json['id'] as String,
         title: json['title'] as String,
         description: json['description'] as String?,
         slug: json['slug'] as String?,
         startDatetime: DateTime.parse(json['start_datetime'] as String),
+        endDatetime: json['end_datetime'] != null
+            ? DateTime.parse(json['end_datetime'] as String)
+            : null,
+        price: json['price']?.toString(),
+        currency: json['currency'] as String?,
+        status: json['status'] as String?,
         moderationComment: null,
         moderatedAt: null,
         venue: VenueModel(
@@ -67,12 +100,8 @@ sealed class EventModel with _$EventModel {
             ],
           ),
         ),
-        category: CategoryModel(
-          id: json['primary_category_id'] as String? ?? '',
-          name: json['primary_category_name'] as String? ?? '',
-          slug: json['primary_category_slug'] as String? ?? '',
-          svg: json['primary_category_icon'] as String?,
-        ),
+        category: primaryCategory,
+        categories: allCategories.isNotEmpty ? allCategories : null,
         images: json['primary_image_url'] != null
             ? [
                 EventImageModel(
@@ -85,6 +114,7 @@ sealed class EventModel with _$EventModel {
         promoter: null,
         promoterDirectId: json['promoter_id'] as String?,
         isFavorite: json['is_favorite'] as bool? ?? false,
+        sourceUrl: json['source_url'] as String?,
         createdAt: null,
         updatedAt: null,
         deletedAt: null,
@@ -148,6 +178,7 @@ sealed class EventModel with _$EventModel {
           : null,
       promoterDirectId: json['promoter_id'] as String?,
       isFavorite: json['is_favorite'] as bool? ?? false,
+      sourceUrl: json['source_url'] as String?,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'] as String)
           : null,
@@ -179,6 +210,7 @@ sealed class EventModel with _$EventModel {
       'category': category?.toJson(),
       'images': images?.map((img) => img.toJson()).toList(),
       'promoter': promoter?.toJson(),
+      'source_url': sourceUrl,
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
       'deleted_at': deletedAt?.toIso8601String(),
@@ -204,6 +236,7 @@ sealed class EventModel with _$EventModel {
         ),
       ),
       category: CategoryModel(id: event.categoryId ?? '', name: '', slug: ''),
+      sourceUrl: event.sourceUrl,
     );
   }
 }
@@ -296,6 +329,7 @@ extension EventModelX on EventModel {
       promoterEmail: promoterEmail,
       isFavorite: isFavorite,
       status: status,
+      sourceUrl: sourceUrl,
     );
   }
 }

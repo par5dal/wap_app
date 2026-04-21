@@ -16,26 +16,6 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
-// Cargar .env para obtener API_BASE_URL y derivar el host del callback
-val envFile = rootProject.file("../.env")
-val envProperties = Properties()
-if (envFile.exists()) {
-    envFile.readLines()
-        .filter { it.isNotBlank() && !it.startsWith("#") && it.contains("=") }
-        .forEach { line ->
-            val (key, value) = line.split("=", limit = 2)
-            envProperties[key.trim()] = value.trim()
-        }
-}
-// Extraer solo el host de API_BASE_URL (ej: "api.whataplan.net" o "192.168.0.230")
-// Elimina el scheme (http:// o https://) y el path/puerto que pueda haber
-val apiBaseUrl = envProperties.getProperty("API_BASE_URL", "https://api.whataplan.net")
-val apiCallbackHost = apiBaseUrl
-    .removePrefix("https://")
-    .removePrefix("http://")
-    .split("/").first()   // quita paths
-    .split(":").first()   // quita puerto
-
 android {
     namespace = "com.jovelupe.wap"
     compileSdk = flutter.compileSdkVersion
@@ -56,8 +36,20 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        // Inyectar host del API en el AndroidManifest para los App Links
-        manifestPlaceholders["apiCallbackHost"] = apiCallbackHost
+    }
+
+    flavorDimensions += "env"
+    productFlavors {
+        create("development") {
+            dimension = "env"
+            // Host del backend de desarrollo para los App Links del callback OAuth
+            manifestPlaceholders["apiCallbackHost"] = "192.168.0.230"
+        }
+        create("production") {
+            dimension = "env"
+            // Host del backend de producción para los App Links del callback OAuth
+            manifestPlaceholders["apiCallbackHost"] = "api.whataplan.net"
+        }
     }
 
     signingConfigs {

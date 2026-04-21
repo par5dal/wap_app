@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wap_app/core/config/dependency_injection.dart';
 import 'package:wap_app/presentation/bloc/app/app_bloc.dart';
 import 'package:wap_app/features/auth/presentation/bloc/auth_bloc.dart';
@@ -29,6 +30,11 @@ import 'package:wap_app/features/auth/presentation/pages/terms_page.dart';
 import 'package:wap_app/features/auth/presentation/pages/force_update_page.dart';
 import 'package:wap_app/features/notifications/presentation/pages/notifications_page.dart';
 import 'package:wap_app/presentation/pages/suspended_page.dart';
+import 'package:wap_app/features/for_promoters/presentation/pages/for_promoters_page.dart';
+import 'package:wap_app/features/upgrade_to_promoter/presentation/pages/upgrade_to_promoter_page.dart';
+import 'package:wap_app/features/promoter_dashboard/presentation/pages/promoter_dashboard_page.dart';
+import 'package:wap_app/features/manage_event/presentation/pages/manage_event_page.dart';
+import 'package:wap_app/features/onboarding/presentation/pages/onboarding_page.dart';
 
 enum AppRoute {
   splash,
@@ -47,6 +53,12 @@ enum AppRoute {
   terms,
   suspended,
   forceUpdate,
+  forPromoters,
+  upgradeToPromoter,
+  promoterDashboard,
+  manageEvent,
+  manageEventEdit,
+  onboarding,
 }
 
 class GoRouterRefreshStream extends ChangeNotifier {
@@ -98,7 +110,13 @@ final goRouter = GoRouter(
         GoRoute(
           name: AppRoute.auth.name,
           path: '/auth',
-          builder: (context, state) => const UnifiedAuthPage(),
+          builder: (context, state) {
+            final extra = state.extra;
+            final role = extra is Map<String, dynamic>
+                ? (extra['role'] as String?)
+                : null;
+            return UnifiedAuthPage(registrationRole: role);
+          },
         ),
       ],
     ),
@@ -229,6 +247,39 @@ final goRouter = GoRouter(
       path: '/force-update',
       builder: (context, state) => const ForceUpdatePage(),
     ),
+    GoRoute(
+      name: AppRoute.forPromoters.name,
+      path: '/for-promoters',
+      builder: (context, state) => const ForPromotersPage(),
+    ),
+    GoRoute(
+      name: AppRoute.upgradeToPromoter.name,
+      path: '/upgrade-to-promoter',
+      builder: (context, state) => const UpgradeToPromoterPage(),
+    ),
+    GoRoute(
+      name: AppRoute.promoterDashboard.name,
+      path: '/promoter-dashboard',
+      builder: (context, state) => const PromoterDashboardPage(),
+    ),
+    GoRoute(
+      name: AppRoute.manageEvent.name,
+      path: '/manage-event',
+      builder: (context, state) => const ManageEventPage(),
+    ),
+    GoRoute(
+      name: AppRoute.manageEventEdit.name,
+      path: '/manage-event/:id',
+      builder: (context, state) {
+        final id = state.pathParameters['id']!;
+        return ManageEventPage(eventId: id);
+      },
+    ),
+    GoRoute(
+      name: AppRoute.onboarding.name,
+      path: '/onboarding',
+      builder: (context, state) => const OnboardingPage(),
+    ),
   ],
   redirect: (BuildContext context, GoRouterState state) {
     // Cold start: si la app arrancó al tocar una notificación, navegar
@@ -248,13 +299,37 @@ final goRouter = GoRouter(
     final location = state.matchedLocation;
 
     // Rutas protegidas que requieren autenticación
-    final protectedRoutes = ['/profile', '/change-password', '/notifications'];
-    final isProtectedRoute = protectedRoutes.contains(location);
+    final protectedRoutes = [
+      '/profile',
+      '/change-password',
+      '/notifications',
+      '/upgrade-to-promoter',
+      '/promoter-dashboard',
+      '/manage-event',
+    ];
+    final isProtectedRoute =
+        protectedRoutes.contains(location) ||
+        location.startsWith('/manage-event/');
+
+    // Rutas exclusivas de PROMOTER/ADMIN
+    final promoterRoutes = ['/promoter-dashboard', '/manage-event'];
+    final isPromoterRoute =
+        promoterRoutes.contains(location) ||
+        location.startsWith('/manage-event/');
+
+    // Rol del usuario autenticado (leído de SharedPreferences)
+    final userRole = sl<SharedPreferences>().getString('user_role');
 
     // Si estamos en splash y ya se checkeo el estado, ir al home
     if (appStatus != AuthStatus.unknown && location == '/splash') {
       return '/home';
     }
+
+    // Mostrar onboarding si no se ha visto todavía
+    final onboardingSeen =
+        sl<SharedPreferences>().getBool('onboarding_seen') ?? false;
+    if (!onboardingSeen && location != '/onboarding') return '/onboarding';
+    if (onboardingSeen && location == '/onboarding') return '/home';
 
     // Si la versión instalada es obsoleta, bloquear toda navegación
     if (appStatus == AuthStatus.updateRequired && location != '/force-update') {
@@ -283,6 +358,22 @@ final goRouter = GoRouter(
     // Si intentamos acceder a una ruta protegida sin auth, ir a login
     if (isProtectedRoute && appStatus == AuthStatus.unauthenticated) {
       return '/auth';
+    }
+
+    // Si un CONSUMER intenta acceder a rutas de promotor, redirigir a upgrade
+    if (isPromoterRoute &&
+        appStatus == AuthStatus.authenticated &&
+        userRole != null &&
+        userRole != 'PROMOTER' &&
+        userRole != 'ADMIN') {
+      return '/upgrade-to-promoter';
+    }
+
+    // Si un PROMOTER/ADMIN intenta ir a /upgrade-to-promoter, ya tiene acceso
+    if (location == '/upgrade-to-promoter' &&
+        appStatus == AuthStatus.authenticated &&
+        (userRole == 'PROMOTER' || userRole == 'ADMIN')) {
+      return '/promoter-dashboard';
     }
 
     // Si estamos autenticados y vamos al auth, redirigir al home

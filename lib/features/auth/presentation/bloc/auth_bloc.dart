@@ -66,17 +66,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         password: event.password,
         firstName: event.firstName,
         lastName: event.lastName,
+        role: event.role,
       ),
     );
-    result.fold(
-      (failure) => emit(AuthFormFailure(failure.message)),
-      (token) {
-        _saveAuthProvider(token);
-        // Los nuevos usuarios nunca han aceptado T&C → mostrar pantalla de aceptación.
-        appBloc.add(const AppTermsNotAccepted(requiredVersion: ''));
-        emit(AuthFormSuccess());
-      },
-    );
+    result.fold((failure) => emit(AuthFormFailure(failure.message)), (token) {
+      _saveAuthProvider(token);
+      // Los nuevos usuarios nunca han aceptado T&C → mostrar pantalla de aceptación.
+      appBloc.add(const AppTermsNotAccepted(requiredVersion: ''));
+      emit(AuthFormSuccess());
+    });
   }
 
   Future<void> _onGoogleSignInPressed(
@@ -170,5 +168,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       'cached_auth_provider',
       token.user?.authProvider ?? 'email',
     );
+    if (token.user?.role != null) {
+      prefs.setString('user_role', token.user!.role);
+    }
   }
 }

@@ -38,6 +38,7 @@ _EventModel _$EventModelFromJson(Map<String, dynamic> json) => _EventModel(
       : UserWithProfileModel.fromJson(json['promoter'] as Map<String, dynamic>),
   promoterDirectId: json['promoterDirectId'] as String?,
   isFavorite: json['isFavorite'] as bool? ?? false,
+  sourceUrl: json['sourceUrl'] as String?,
   createdAt: json['createdAt'] == null
       ? null
       : DateTime.parse(json['createdAt'] as String),
@@ -70,6 +71,7 @@ Map<String, dynamic> _$EventModelToJson(_EventModel instance) =>
       'promoter': instance.promoter,
       'promoterDirectId': instance.promoterDirectId,
       'isFavorite': instance.isFavorite,
+      'sourceUrl': instance.sourceUrl,
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),
       'deletedAt': instance.deletedAt?.toIso8601String(),

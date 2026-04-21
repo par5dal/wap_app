@@ -153,16 +153,16 @@ class _CategoriesExplorerPageState extends State<CategoriesExplorerPage>
               itemCount: categories.length,
               itemBuilder: (context, index) {
                 final category = categories[index];
-                final delay = index * 0.1;
+                // Limitar el delay máximo a 0.5s para que todas las categorías
+                // terminen de animarse antes de que el controlador llegue a 1.0
+                final delay = (index * 0.05).clamp(0.0, 0.5);
 
                 return AnimatedBuilder(
                   animation: _animationController,
                   builder: (context, child) {
                     final animationValue = Curves.easeOutCubic.transform(
-                      (((_animationController.value * 2) - delay).clamp(
-                        0.0,
-                        1.0,
-                      )),
+                      ((_animationController.value - delay) / (1.0 - delay))
+                          .clamp(0.0, 1.0),
                     );
 
                     return Transform.scale(

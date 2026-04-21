@@ -24,7 +24,8 @@ import 'package:wap_app/shared/widgets/glowing_logo.dart';
 enum AuthStep { initial, emailInput, login, register }
 
 class UnifiedAuthPage extends StatefulWidget {
-  const UnifiedAuthPage({super.key});
+  final String? registrationRole;
+  const UnifiedAuthPage({super.key, this.registrationRole});
 
   @override
   State<UnifiedAuthPage> createState() => _UnifiedAuthPageState();
@@ -102,6 +103,7 @@ class _UnifiedAuthPageState extends State<UnifiedAuthPage> {
           password: password,
           firstName: firstName,
           lastName: lastName,
+          role: widget.registrationRole ?? 'CONSUMER',
         ),
       );
     }

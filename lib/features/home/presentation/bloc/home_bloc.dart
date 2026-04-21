@@ -20,10 +20,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final GetEventsForMapBoundsUseCase getEventsForMapBounds;
   final EventTileProvider? tileProvider;
 
-  // Guard against concurrent Geolocator.requestPermission() calls (iOS throws
-  // PermissionRequestInProgressException if two requests overlap).
-  Future<LocationPermission>? _permissionRequest;
-
   // Guard against concurrent LoadNearbyEvents executions. If a load is already
   // in progress, additional events are dropped until it completes.
   bool _loadNearbyEventsInProgress = false;
@@ -495,28 +491,45 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
-      // Deduplicate: if a permission dialog is already showing, await the same
-      // Future instead of starting a second request (iOS would throw
-      // PermissionRequestInProgressException).
-      _permissionRequest ??= Geolocator.requestPermission().whenComplete(() {
-        _permissionRequest = null;
-      });
-      permission = await _permissionRequest!;
-      if (permission == LocationPermission.denied) {
-        throw LocationPermissionDeniedException();
-      }
+      throw LocationPermissionDeniedException();
     }
 
     if (permission == LocationPermission.deniedForever) {
       throw LocationPermissionDeniedForeverException();
     }
 
-    return await Geolocator.getCurrentPosition(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 10,
-      ),
-    );
+    // Intentar primero con la última posición conocida — respuesta inmediata
+    // (especialmente útil en iOS donde getCurrentPosition con alta precisión
+    // puede tardar 10+ segundos en frío al necesitar fix GPS)
+    final last = await Geolocator.getLastKnownPosition();
+    if (last != null) {
+      final age = DateTime.now().difference(last.timestamp);
+      // Si la última posición tiene menos de 10 minutos, usarla directamente
+      if (age.inMinutes < 10) {
+        AppLogger.info(
+          '[HomeBloc] Using lastKnownPosition (age: ${age.inSeconds}s) for fast startup.',
+        );
+        return last;
+      }
+    }
+
+    // Sin posición reciente — obtener posición fresca
+    // Usamos medium en lugar de high: en iOS evita esperar fix GPS desde satélite,
+    // usando wifi/cell que es igual de preciso para mostrar el mapa.
+    try {
+      return await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.medium,
+          distanceFilter: 10,
+        ),
+      ).timeout(const Duration(seconds: 10));
+    } catch (e) {
+      AppLogger.warning(
+        '[HomeBloc] getCurrentPosition timed out or failed, trying lastKnownPosition: $e',
+      );
+      if (last != null) return last;
+      rethrow;
+    }
   }
 
   String _getLocationErrorMessage(dynamic error) {
@@ -674,10 +687,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
 
     // Aplicar filtro de categorías (selección múltiple)
+    // Se comprueba la categoría principal Y todas las secundarias del evento
     if (categories != null && categories.isNotEmpty) {
       filtered = filtered.where((event) {
-        return event.categorySlug != null &&
+        final primaryMatch =
+            event.categorySlug != null &&
             categories.contains(event.categorySlug);
+        final secondaryMatch =
+            event.categories?.any((cat) => categories.contains(cat.slug)) ??
+            false;
+        return primaryMatch || secondaryMatch;
       }).toList();
     }
 

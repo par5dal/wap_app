@@ -11,13 +11,12 @@ import 'package:app_links/app_links.dart';
 import 'package:wap_app/l10n/app_localizations.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:wap_app/core/router/app_router.dart';
-import 'package:wap_app/core/config/firebase_options.dart';
+import 'package:wap_app/core/config/env_config.dart';
 import 'package:wap_app/core/services/notification_service.dart';
 import 'package:wap_app/core/services/connectivity_service.dart';
 import 'package:wap_app/features/home/presentation/bloc/home_bloc.dart';
 import 'package:wap_app/features/notifications/presentation/bloc/notifications_bloc.dart';
 import 'package:wap_app/shared/widgets/no_connection_banner.dart';
-import 'package:dio/dio.dart';
 
 import 'package:wap_app/core/config/dependency_injection.dart' as di;
 import 'package:wap_app/core/utils/app_logger.dart';
@@ -30,99 +29,108 @@ import 'package:wap_app/core/theme/app_theme.dart';
 final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 Future<void> main() async {
-  await runZonedGuarded(
-    () async {
-      WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
 
-      await SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-      ]);
+  // Paso 1: orientación (no bloquea el arranque)
+  unawaited(
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]),
+  );
 
-      await dotenv.load(fileName: ".env");
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
+  const iosDsn =
+      'https://726761e40e2dcfe19095f0f3dcc873e4@o4510172185296896.ingest.de.sentry.io/4510856293777488';
+  const androidDsn =
+      'https://c6105a00a779576bcdf39f1a65d42b67@o4510172185296896.ingest.de.sentry.io/4510172187983952';
+  final isAndroid =
+      const bool.fromEnvironment('dart.library.io') && Platform.isAndroid;
+
+  // Paso 2: dotenv — falla inmediatamente si el asset no está en el bundle
+  await dotenv.load(fileName: '.env');
+  debugPrint('[INIT] dotenv OK – ENV suffix: ${EnvConfig.suffix}');
+
+  // Paso 3: Sentry ANTES de Firebase — solo necesita WidgetsFlutterBinding.
+  // Así si Firebase (o cualquier paso posterior) falla, Sentry ya está activo
+  // y _runErrorApp puede mostrar el error en pantalla.
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = isAndroid ? androidDsn : iosDsn;
+      options.environment = EnvConfig.isProduction
+          ? 'production'
+          : 'development';
+      options.tracesSampleRate = 1.0;
+    },
+    appRunner: () async {
+      await runZonedGuarded(
+        () async {
+          // Paso 4: Firebase — dentro del zone guarded para que cualquier
+          // excepción sea capturada por Sentry y mostrada en pantalla.
+          // SIN timeout: .timeout() en channel nativo iOS causa [core/not-initialized].
+          await Firebase.initializeApp();
+          debugPrint('[INIT] Firebase OK');
+
+          await di.initDI();
+          debugPrint('[INIT] DI OK');
+
+          _initDeepLinkListener();
+
+          await di.sl<NotificationService>().initialize().timeout(
+            const Duration(seconds: 10),
+            onTimeout: () {
+              // FCM timeout NO es fatal — la app arranca igualmente sin push
+              debugPrint('[INIT] NotificationService timeout (no fatal)');
+            },
+          );
+          _initNotificationListeners();
+
+          di.sl<AppBloc>().add(AppStatusChecked());
+
+          runApp(const MyApp());
+        },
+        (exception, stackTrace) async {
+          debugPrint('[INIT ERROR] $exception\n$stackTrace');
+          await Sentry.captureException(exception, stackTrace: stackTrace);
+          _runErrorApp('$exception\n\n$stackTrace');
+        },
       );
-      await di.initDI();
-
-      // Configurar listener de deep links (OAuth callback de Google)
-      _initDeepLinkListener();
-
-      // Inicializar FCM: registrar handler de background y escuchar mensajes
-      await di.sl<NotificationService>().initialize();
-      _initNotificationListeners();
-
-      // Disparamos el evento al AppBloc global para que empiece a comprobar el estado de la sesión.
-      di.sl<AppBloc>().add(
-        AppStatusChecked(),
-      ); // O un evento 'CheckStatus' dedicado
-
-      await SentryFlutter.init((options) {
-        // Usar DSN específico por plataforma
-        final isAndroid =
-            const bool.fromEnvironment('dart.library.io') && Platform.isAndroid;
-        final dsn = isAndroid
-            ? dotenv.env['SENTRY_DSN_ANDROID'] ?? dotenv.env['SENTRY_DSN']
-            : dotenv.env['SENTRY_DSN_IOS'] ?? dotenv.env['SENTRY_DSN'];
-
-        options.dsn = dsn;
-        options.tracesSampleRate = 1.0;
-
-        // Filtrar errores que no deben reportarse a Sentry
-        options.beforeSend = (event, hint) async {
-          // Filtrar errores de ubicación (son esperados en el flujo normal)
-          final exceptionType = event.throwable?.runtimeType.toString() ?? '';
-          if (exceptionType.isNotEmpty &&
-              (exceptionType.contains('LocationServiceDisabledException') ||
-                  exceptionType.contains('LocationPermissionDeniedException') ||
-                  exceptionType.contains(
-                    'LocationPermissionDeniedForeverException',
-                  ))) {
-            // No reportar estos errores a Sentry
-            return null;
-          }
-
-          // También verificar en el mensaje de error
-          final eventMessage = event.message?.formatted ?? '';
-          if (eventMessage.contains('LocationServiceDisabledException') ||
-              eventMessage.contains('LocationPermissionDeniedException') ||
-              eventMessage.contains(
-                'LocationPermissionDeniedForeverException',
-              )) {
-            return null;
-          }
-
-          // Filtrar errores Dio de conectividad — son esperados cuando el
-          // usuario no tiene internet y se gestionan en la UI con el banner.
-          final throwable = event.throwable;
-          if (throwable is DioException &&
-              (throwable.type == DioExceptionType.connectionTimeout ||
-                  throwable.type == DioExceptionType.receiveTimeout ||
-                  throwable.type == DioExceptionType.sendTimeout ||
-                  throwable.type == DioExceptionType.connectionError)) {
-            return null;
-          }
-
-          // Filtrar errores Dio 403 — el interceptor ya los maneja (T&C no
-          // aceptados, cuenta suspendida) y navega a la pantalla apropiada.
-          // Reportarlos a Sentry es ruido puesto que el flujo está controlado.
-          if (throwable is DioException &&
-              throwable.response?.statusCode == 403) {
-            return null;
-          }
-
-          // Añadir tags para identificar la plataforma
-          event.tags = {
-            ...?event.tags,
-            'platform': isAndroid ? 'android' : 'ios',
-          };
-          return event;
-        };
-      }, appRunner: () => runApp(const MyApp()));
     },
-    (exception, stackTrace) async {
-      await Sentry.captureException(exception, stackTrace: stackTrace);
-    },
+  );
+}
+
+/// Muestra un error crítico en pantalla cuando el arranque falla.
+/// Solo se usa como diagnóstico — no aparece en condiciones normales.
+void _runErrorApp(String message) {
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: const Color(0xFFFFEBEE),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  '⛔ Error de arranque',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                SelectableText(
+                  message,
+                  style: const TextStyle(fontSize: 11, fontFamily: 'monospace'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    ),
   );
 }
 
@@ -146,11 +154,9 @@ void _initNotificationListeners() {
     if (title.isEmpty && body.isEmpty) return;
 
     final type = message.data['type'];
-    final eventId = message.data['event_id'];
     final eventSlug = message.data['slug'] as String?;
-    final eventTarget = eventSlug?.isNotEmpty == true ? eventSlug : eventId;
     final hasEventTarget =
-        type == 'new_event' && eventTarget != null && eventTarget.isNotEmpty;
+        type == 'new_event' && eventSlug != null && eventSlug.isNotEmpty;
 
     scaffoldMessengerKey.currentState?.showSnackBar(
       SnackBar(
@@ -181,7 +187,7 @@ void _initNotificationListeners() {
                     // No ID in payload — at least refresh so badge clears
                     di.sl<NotificationsBloc>().add(const RefreshUnreadCount());
                   }
-                  goRouter.push('/events/$eventTarget');
+                  goRouter.push('/events/$eventSlug');
                 },
               )
             : null,
@@ -196,11 +202,9 @@ void _initNotificationListeners() {
     di.sl<NotificationsBloc>().add(const RefreshUnreadCount());
 
     final type = message.data['type'];
-    final eventId = message.data['event_id'];
     final eventSlug = message.data['slug'] as String?;
-    final eventTarget = eventSlug?.isNotEmpty == true ? eventSlug : eventId;
-    if (type == 'new_event' && eventTarget != null && eventTarget.isNotEmpty) {
-      goRouter.push('/events/$eventTarget');
+    if (type == 'new_event' && eventSlug != null && eventSlug.isNotEmpty) {
+      goRouter.push('/events/$eventSlug');
     } else {
       goRouter.go('/home');
     }

@@ -121,8 +121,22 @@ class DioInterceptor extends Interceptor {
     }
 
     if (err.response?.statusCode == 401) {
-      AppLogger.warning('âŒ 401 para ${err.requestOptions.path} â€” cerrando sesiÃ³n');
-      await _signOut();
+      // Solo cerrar sesión si la petición llevaba un token de autenticación.
+      // Un 401 en una petición sin token simplemente significa "se requiere auth",
+      // no que la sesión haya expirado.
+      final hadAuthHeader = err.requestOptions.headers.containsKey(
+        'Authorization',
+      );
+      if (hadAuthHeader) {
+        AppLogger.warning(
+          '❌ 401 con token para ${err.requestOptions.path} – cerrando sesión',
+        );
+        await _signOut();
+      } else {
+        AppLogger.warning(
+          '⚠️ 401 sin token para ${err.requestOptions.path} – ignorando',
+        );
+      }
       return handler.reject(err);
     }
 

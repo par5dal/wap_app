@@ -34,14 +34,16 @@ class AuthRepositoryImpl implements AuthRepository {
     String email,
     String password,
     String firstName,
-    String lastName,
-  ) async {
+    String lastName, {
+    String role = 'CONSUMER',
+  }) async {
     try {
       final tokenModel = await remoteDataSource.register(
         email,
         password,
         firstName,
         lastName,
+        role: role,
       );
       return Right(tokenModel);
     } catch (error, stackTrace) {

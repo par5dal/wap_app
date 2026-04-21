@@ -22,6 +22,7 @@ import 'package:wap_app/features/promoter_profile/presentation/pages/promoter_pr
 import 'package:wap_app/l10n/app_localizations.dart';
 import 'package:wap_app/presentation/bloc/app/app_bloc.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:wap_app/core/services/analytics_service.dart';
 import 'package:wap_app/shared/widgets/custom_button.dart';
 import 'package:wap_app/shared/widgets/favorite_button.dart';
@@ -336,6 +337,13 @@ class _EventDetailPageState extends State<EventDetailPage> {
   }
 
   Event get _displayEvent => _fullEvent ?? widget.event;
+
+  Future<void> _launchUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
 
   /// Navega hacia atrás de forma segura.
   /// Si hay páginas anteriores en el stack se hace pop.
@@ -703,6 +711,35 @@ class _EventDetailPageState extends State<EventDetailPage> {
                       ),
                       const SizedBox(height: 32),
 
+                      // Enlace del origen del evento (source_url)
+                      if (_displayEvent.sourceUrl != null &&
+                          _displayEvent.sourceUrl!.isNotEmpty)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _buildSection(
+                              context,
+                              icon: Icons.link,
+                              title: t.eventDetailSource,
+                              child: GestureDetector(
+                                onTap: () =>
+                                    _launchUrl(_displayEvent.sourceUrl!),
+                                child: Text(
+                                  _displayEvent.sourceUrl!,
+                                  style: context.textTheme.bodyMedium?.copyWith(
+                                    color: context.colorScheme.primary,
+                                    decoration: TextDecoration.underline,
+                                    height: 1.5,
+                                  ),
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 32),
+                          ],
+                        ),
+
                       // Ubicación con mapa de Google Maps
                       _buildSection(
                         context,
@@ -989,24 +1026,25 @@ class _EventDetailPageState extends State<EventDetailPage> {
   }
 
   String _formatEventDuration(DateTime start, DateTime end) {
-    final duration = end.difference(start);
+    final startDay = DateTime(start.year, start.month, start.day);
+    final endDay = DateTime(end.year, end.month, end.day);
 
+    // Evento multi-día: mostrar fecha fin en el mismo formato que la fecha inicio
+    if (endDay != startDay) {
+      return _formatEventDateTime(end);
+    }
+
+    // Evento de un día: mostrar duración en horas/minutos
+    final duration = end.difference(start);
     if (duration.inMinutes < 60) {
       return '${duration.inMinutes} min';
-    } else if (duration.inHours < 24) {
+    } else {
       final hours = duration.inHours;
       final minutes = duration.inMinutes.remainder(60);
       if (minutes == 0) {
-        return '$hours ${hours == 1 ? 'hora' : 'horas'}';
+        return '$hours h';
       }
-      return '$hours ${hours == 1 ? 'h' : 'h'} $minutes min';
-    } else {
-      final days = duration.inDays;
-      final hours = duration.inHours.remainder(24);
-      if (hours == 0) {
-        return '$days ${days == 1 ? 'día' : 'días'}';
-      }
-      return '$days ${days == 1 ? 'día' : 'días'} $hours h';
+      return '$hours h $minutes min';
     }
   }
 }

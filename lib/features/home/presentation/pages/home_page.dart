@@ -34,22 +34,24 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AppBloc, AppState>(
-      builder: (context, appState) {
-        // Verificar si el usuario está autenticado
-        final isAuthenticated = appState.status == AuthStatus.authenticated;
-
-        return MultiBlocProvider(
-          providers: [
-            BlocProvider(
-              create: (_) => sl<HomeBloc>()..add(const LoadNearbyEvents()),
-            ),
-            // Usar el ProfileBloc singleton si el usuario está autenticado
-            if (isAuthenticated) BlocProvider.value(value: sl<ProfileBloc>()),
-          ],
-          child: const HomePageView(),
-        );
-      },
+    // IMPORTANTE: BlocProvider<HomeBloc> debe estar FUERA de cualquier builder
+    // que pueda reconstruirse (como BlocBuilder<AppBloc>). Si estuviera dentro,
+    // un cambio en AppBloc (e.g. unknown→unauthenticated) podría causar el
+    // remontado de BlocProvider<HomeBloc>, cerrando el HomeBloc en mitad de una
+    // carga y haciendo que emit.isDone=true → el loader grande nunca desaparece.
+    return BlocProvider(
+      create: (_) => sl<HomeBloc>(),
+      child: BlocSelector<AppBloc, AppState, bool>(
+        selector: (state) => state.status == AuthStatus.authenticated,
+        builder: (context, isAuthenticated) {
+          if (!isAuthenticated) return const HomePageView();
+          // Inyectar ProfileBloc sólo cuando el usuario está autenticado
+          return BlocProvider.value(
+            value: sl<ProfileBloc>(),
+            child: const HomePageView(),
+          );
+        },
+      ),
     );
   }
 }
@@ -83,11 +85,16 @@ class _HomePageViewState extends State<HomePageView>
   // Variable para detectar cuando se deselecciona un evento
   bool _hadSelectedEvent = false;
 
+  // Controla si aún estamos en el arranque inicial (esperando el permiso de
+  // ubicación). Mientras sea true se muestra el LoadingOverlay para evitar
+  // mostrar el mapa vacío antes de saber si tenemos acceso a la ubicación.
+  bool _startingUp = true;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _initLocationPermission();
+    // _lastLocationPermission se establece en _requestLocationPermissionAndLoad.
 
     // Limpiar caché de markers para forzar regeneración con nuevos tamaños
     MapMarkerHelper.clearCache();
@@ -106,7 +113,7 @@ class _HomePageViewState extends State<HomePageView>
 
     // If HomeBloc already has events loaded (e.g. after registration rebuilds this state),
     // push them to the cluster manager on the next frame when context is available.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       _manualClusterManager?.pixelRatio = MediaQuery.of(
         context,
@@ -119,6 +126,13 @@ class _HomePageViewState extends State<HomePageView>
       // Request notification permission after home page loads (only if authenticated
       // and permission not yet determined — iOS won't show dialog if already decided)
       _requestNotificationPermissionIfNeeded();
+
+      // Solicitar permiso de ubicación desde la UI *antes* de lanzar
+      // LoadNearbyEvents. Esto evita el conflicto "Can request only one set
+      // of permissions at a time" que se producía cuando el BLoC pedía el
+      // permiso al mismo tiempo que otras partes del sistema (Maps SDK,
+      // servicio en primer plano de Geolocator, etc.).
+      await _requestLocationPermissionAndLoad();
     });
   }
 
@@ -228,8 +242,26 @@ class _HomePageViewState extends State<HomePageView>
     }
   }
 
-  Future<void> _initLocationPermission() async {
-    _lastLocationPermission = await Geolocator.checkPermission();
+  /// Solicita el permiso de ubicación desde la UI (si todavía no está
+  /// concedido) y luego dispara [LoadNearbyEvents] en el BLoC.
+  /// Al hacerlo desde la UI —antes de que el BLoC ejecute _determinePosition—
+  /// se evita el conflicto de permisos concurrentes en Android.
+  Future<void> _requestLocationPermissionAndLoad() async {
+    if (!mounted) return;
+
+    var permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    // Actualizar _lastLocationPermission ANTES de disparar LoadNearbyEvents
+    // para que didChangeAppLifecycleState no vuelva a disparar otro
+    // LoadNearbyEvents por la misma transición de permisos.
+    _lastLocationPermission = permission;
+
+    if (!mounted) return;
+    setState(() => _startingUp = false);
+    context.read<HomeBloc>().add(const LoadNearbyEvents());
   }
 
   @override
@@ -314,6 +346,7 @@ class _HomePageViewState extends State<HomePageView>
 
     // Crear un nuevo timer con debounce de 600ms (optimizado para tiles)
     _mapMoveDebounce = Timer(const Duration(milliseconds: 600), () {
+      if (!mounted) return;
       _checkAndLoadEventsForNewPosition(position);
       // Solo actualizar eventos visibles si NO hay un evento seleccionado
       // para evitar sobrescribir el estado durante la navegación de eventos colocalizados
@@ -326,6 +359,7 @@ class _HomePageViewState extends State<HomePageView>
   Future<void> _checkAndLoadEventsForNewPosition(
     CameraPosition position,
   ) async {
+    if (!mounted) return;
     final bloc = context.read<HomeBloc>();
     final state = bloc.state;
 
@@ -479,22 +513,23 @@ class _HomePageViewState extends State<HomePageView>
     final currentState = bloc.state;
 
     // Extraer categorías únicas de todos los eventos cargados
-    final availableCategories =
-        currentState.allEvents
-            .where((event) => event.categorySlug != null)
-            .map((event) => event.categorySlug!)
-            .toSet()
-            .toList()
-          ..sort(); // Ordenar alfabéticamente
-
-    // Mapa de SVG por slug de categoría (mismo que usan los markers del mapa)
+    // (categoría principal + todas las secundarias)
     final categorySvgMap = <String, String?>{};
     for (final event in currentState.allEvents) {
-      if (event.categorySlug != null &&
-          !categorySvgMap.containsKey(event.categorySlug)) {
-        categorySvgMap[event.categorySlug!] = event.categorySvg;
+      if (event.categories != null && event.categories!.isNotEmpty) {
+        for (final cat in event.categories!) {
+          if (!categorySvgMap.containsKey(cat.slug)) {
+            categorySvgMap[cat.slug] = cat.svg;
+          }
+        }
+      } else if (event.categorySlug != null) {
+        // Fallback para eventos que solo tienen categoría principal
+        if (!categorySvgMap.containsKey(event.categorySlug)) {
+          categorySvgMap[event.categorySlug!] = event.categorySvg;
+        }
       }
     }
+    final availableCategories = categorySvgMap.keys.toList()..sort();
 
     showGeneralDialog(
       context: context,
@@ -664,9 +699,10 @@ class _HomePageViewState extends State<HomePageView>
                 },
               ),
 
-              // Loading Overlay
-              if (state.isLoading && state.events.isEmpty)
-                LoadingOverlay(isLoading: state.isLoading, child: Container()),
+              // Loading Overlay: mostrar durante el arranque (mientras se
+              // gestiona el permiso de ubicación) y mientras se cargan eventos.
+              if (_startingUp || (state.isLoading && state.events.isEmpty))
+                const LoadingOverlay(isLoading: true, child: SizedBox.shrink()),
 
               // Barra de búsqueda + botón de recarga (parte superior)
               Positioned(
@@ -722,13 +758,25 @@ class _HomePageViewState extends State<HomePageView>
                 ),
               ),
 
-              // Loader pequeño de tiles con efecto rotando (sin blur)
-              if (context.read<HomeBloc>().tileProvider?.isLoading == true)
-                Positioned(
-                  top: MediaQuery.of(context).padding.top + 80,
-                  left: 0,
-                  right: 0,
-                  child: const Center(child: _SimpleRotatingLoader()),
+              // Loader pequeño de tiles — sólo visible cuando ya hay eventos cargados
+              // (evita solapamiento con el LoadingOverlay de carga inicial)
+              if (context.read<HomeBloc>().tileProvider != null &&
+                  state.events.isNotEmpty)
+                ListenableBuilder(
+                  listenable: context.read<HomeBloc>().tileProvider!,
+                  builder: (context, _) {
+                    final isLoadingTiles = context
+                        .read<HomeBloc>()
+                        .tileProvider!
+                        .isLoading;
+                    if (!isLoadingTiles) return const SizedBox.shrink();
+                    return Positioned(
+                      top: MediaQuery.of(context).padding.top + 80,
+                      left: 0,
+                      right: 0,
+                      child: const Center(child: _SimpleRotatingLoader()),
+                    );
+                  },
                 ),
 
               // Card de detalle del evento (debajo de la barra de búsqueda)

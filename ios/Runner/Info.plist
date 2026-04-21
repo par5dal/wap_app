@@ -56,10 +56,10 @@
 		<string>Necesitamos tu ubicación para mostrarte eventos cercanos</string>
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 		<string>Necesitamos tu ubicación para mostrarte eventos cercanos</string>	<key>NSCameraUsageDescription</key>
-	<string>Necesitamos acceso a la cámara para que puedas actualizar tu foto de perfil</string>
+	<string>Necesitamos acceso a la cámara para que puedas actualizar tu foto de perfil y añadir imágenes a tus planes</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Necesitamos acceso a tu galería de fotos para que puedas seleccionar una imagen de perfil</string>		<key>GIDClientID</key>
-		<string>650124231439-18vp2qirvkv4pf83gl4kdti90qhm9erg.apps.googleusercontent.com</string>
+	<string>Necesitamos acceso a tu galería de fotos para que puedas seleccionar imágenes de perfil y para tus planes</string>		<key>GIDClientID</key>
+		<string>99666080057-jrou4452937pf4d0da4hbg4prpsp5fsa.apps.googleusercontent.com</string>
 		<key>CFBundleURLTypes</key>
 		<array>
 			<dict>
@@ -69,6 +69,15 @@
 				<array>
 					<!-- Esquema custom para callback OAuth (wap://auth/callback#...) -->
 					<string>wap</string>
+				</array>
+			</dict>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<!-- REVERSED_CLIENT_ID necesario para el callback OAuth de Google Sign-In -->
+					<string>com.googleusercontent.apps.99666080057-jrou4452937pf4d0da4hbg4prpsp5fsa</string>
 				</array>
 			</dict>
 		</array>

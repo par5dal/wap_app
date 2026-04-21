@@ -167,6 +167,21 @@ class AppTheme {
         ),
       ),
 
+      // Filled Button Theme
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          minimumSize: const Size(double.infinity, buttonHeight),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(buttonBorderRadius),
+          ),
+          textStyle: GoogleFonts.poppins(
+            fontSize: buttonFontSize,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
+          ),
+        ),
+      ),
+
       // Outlined Button Theme
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
@@ -338,6 +353,21 @@ class AppTheme {
             borderRadius: BorderRadius.circular(buttonBorderRadius),
           ),
           elevation: 0,
+          textStyle: GoogleFonts.poppins(
+            fontSize: buttonFontSize,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
+          ),
+        ),
+      ),
+
+      // Filled Button Theme
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          minimumSize: const Size(double.infinity, buttonHeight),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(buttonBorderRadius),
+          ),
           textStyle: GoogleFonts.poppins(
             fontSize: buttonFontSize,
             fontWeight: FontWeight.w600,

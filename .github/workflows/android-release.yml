@@ -35,11 +35,13 @@ jobs:
 
     - name: Create .env file
       run: |
-        echo "API_BASE_URL=${{ secrets.API_BASE_URL }}" >> .env
+        echo "API_BASE_URL_PROD=${{ secrets.API_BASE_URL }}" >> .env
+        echo "API_BASE_URL_DEV=${{ secrets.API_BASE_URL }}" >> .env
         echo "SENTRY_DSN_ANDROID=${{ secrets.SENTRY_DSN_ANDROID }}" >> .env
         echo "SENTRY_DSN_IOS=${{ secrets.SENTRY_DSN_IOS }}" >> .env
         echo "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >> .env
-        echo "GOOGLE_SERVER_CLIENT_ID=${{ secrets.GOOGLE_SERVER_CLIENT_ID }}" >> .env
+        echo "GOOGLE_SERVER_CLIENT_ID_PROD=${{ secrets.GOOGLE_SERVER_CLIENT_ID }}" >> .env
+        echo "GOOGLE_SERVER_CLIENT_ID_DEV=${{ secrets.GOOGLE_SERVER_CLIENT_ID }}" >> .env
         echo "CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}" >> .env
         echo "GOOGLE_PLACES_API_KEY=${{ secrets.GOOGLE_PLACES_API_KEY }}" >> .env
         echo "GOOGLE_PLACES_API_KEY_IOS=${{ secrets.GOOGLE_PLACES_API_KEY_IOS }}" >> .env
@@ -72,7 +74,7 @@ jobs:
       run: dart run build_runner build --delete-conflicting-outputs
 
     - name: Build Android APK
-      run: flutter build apk --release
+      run: flutter build apk --release --dart-define=ENV=production
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4

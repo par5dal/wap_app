@@ -92,23 +92,47 @@ class EventListCard extends StatelessWidget {
                       const SizedBox(height: 8),
 
                       // Fecha
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.schedule,
-                            size: 14,
-                            color: context.colorScheme.primary,
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              _formatEventDate(event.startDate, t),
-                              style: context.textTheme.bodySmall,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
+                      Builder(
+                        builder: (context) {
+                          final ongoing = _isOngoing(
+                            event.startDate,
+                            event.endDate,
+                          );
+                          final dateColor = ongoing
+                              ? Colors.green.shade600
+                              : context.colorScheme.primary;
+                          return Row(
+                            children: [
+                              Icon(
+                                ongoing
+                                    ? Icons.play_circle_outline
+                                    : Icons.schedule,
+                                size: 14,
+                                color: dateColor,
+                              ),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  _formatEventDateRange(
+                                    event.startDate,
+                                    event.endDate,
+                                    t,
+                                  ),
+                                  style: context.textTheme.bodySmall?.copyWith(
+                                    color: ongoing
+                                        ? Colors.green.shade600
+                                        : null,
+                                    fontWeight: ongoing
+                                        ? FontWeight.w600
+                                        : null,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                       const SizedBox(height: 4),
 
@@ -199,15 +223,51 @@ class EventListCard extends StatelessWidget {
     );
   }
 
-  String _formatEventDate(DateTime date, AppLocalizations t) {
+  bool _isOngoing(DateTime startDate, DateTime? endDate) {
+    final now = DateTime.now();
+    return endDate != null && startDate.isBefore(now) && endDate.isAfter(now);
+  }
+
+  String _formatEventDateRange(
+    DateTime startDate,
+    DateTime? endDate,
+    AppLocalizations t,
+  ) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final eventDay = DateTime(date.year, date.month, date.day);
+    final tomorrow = today.add(const Duration(days: 1));
+    final startDay = DateTime(startDate.year, startDate.month, startDate.day);
 
-    if (eventDay == today) {
-      return t.eventCardTodayAt(DateFormat('HH:mm').format(date));
+    // Caso 1: Evento en curso (ya empezó pero aún no ha terminado)
+    if (endDate != null && startDate.isBefore(now) && endDate.isAfter(now)) {
+      final endDay = DateTime(endDate.year, endDate.month, endDate.day);
+      final endFormatted = endDay == today
+          ? DateFormat('HH:mm').format(endDate)
+          : DateFormat('d MMM', t.localeName).format(endDate);
+      return t.eventCardOngoing(endFormatted);
+    }
+
+    // Caso 2: Evento multi-día futuro (inicio y fin en días distintos)
+    if (endDate != null) {
+      final endDay = DateTime(endDate.year, endDate.month, endDate.day);
+      if (endDay != startDay) {
+        final startFormatted = startDay == today
+            ? t.filterDateToday
+            : startDay == tomorrow
+            ? t.filterDateTomorrow
+            : DateFormat('d MMM', t.localeName).format(startDate);
+        final endFormatted = DateFormat('d MMM', t.localeName).format(endDate);
+        return '$startFormatted – $endFormatted';
+      }
+    }
+
+    // Caso 3: Evento de un solo día
+    if (startDay == today) {
+      return t.eventCardTodayAt(DateFormat('HH:mm').format(startDate));
+    } else if (startDay == tomorrow) {
+      return t.eventCardTomorrowAt(DateFormat('HH:mm').format(startDate));
     } else {
-      return DateFormat('dd/MM/yyyy HH:mm').format(date);
+      return DateFormat('d MMM · HH:mm', t.localeName).format(startDate);
     }
   }
 }

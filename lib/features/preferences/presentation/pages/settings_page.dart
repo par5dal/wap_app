@@ -9,6 +9,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wap_app/core/config/dependency_injection.dart' as di;
 import 'package:wap_app/core/router/app_router.dart';
@@ -91,6 +92,22 @@ class SettingsPage extends StatelessWidget {
                   type: 'terms',
                 ),
               ],
+            ),
+          ),
+          // --- Sección Tutoriales (siempre visible) ---
+          _CollapsibleSection(
+            title: t.settingsSectionTutorials,
+            icon: Icons.help_outline,
+            child: ListTile(
+              leading: const Icon(Icons.replay_outlined),
+              title: Text(t.settingsTutorialReplay),
+              subtitle: Text(t.settingsTutorialReplayDesc),
+              onTap: () {
+                di.sl<SharedPreferences>().setBool('onboarding_seen', false);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(t.settingsTutorialReplayConfirm)),
+                );
+              },
             ),
           ),
           // --- Sección Información (siempre visible) ---

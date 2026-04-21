@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wap_app/core/config/dependency_injection.dart';
 import 'package:wap_app/core/error/failures.dart';
 import 'package:wap_app/core/services/analytics_service.dart';
@@ -110,6 +111,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     await _authRepository.logout();
 
     sl<BlockedUsersService>().clear();
+    sl<SharedPreferences>().remove('user_role');
     emit(const AppState.unauthenticated());
   }
 

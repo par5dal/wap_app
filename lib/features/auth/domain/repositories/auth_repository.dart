@@ -12,8 +12,9 @@ abstract class AuthRepository {
     String email,
     String password,
     String firstName,
-    String lastName,
-  );
+    String lastName, {
+    String role = 'CONSUMER',
+  });
 
   /// Login nativo con Google (sin redirección al navegador).
   Future<Either<Failure, TokenEntity>> loginWithGoogle();

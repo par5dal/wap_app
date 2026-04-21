@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProfileModel {
 
- String get userId; String? get displayName; String? get firstName; String? get lastName; DateTime? get dateOfBirth; String? get phoneNumber; String? get bio; String? get avatarUrl; String? get address; String? get city; String? get country; String? get postalCode; DateTime get createdAt; DateTime get updatedAt;
+ String get userId; String? get displayName; String? get firstName; String? get lastName; DateTime? get dateOfBirth; String? get phoneNumber; String? get bio; String? get avatarUrl; String? get address; String? get city; String? get country; String? get postalCode; String? get companyName; String? get taxId; String? get websiteUrl; DateTime get createdAt; DateTime get updatedAt;
 /// Create a copy of ProfileModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ProfileModelCopyWith<ProfileModel> get copyWith => _$ProfileModelCopyWithImpl<P
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileModel&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.firstName, firstName) || other.firstName == firstName)&&(identical(other.lastName, lastName) || other.lastName == lastName)&&(identical(other.dateOfBirth, dateOfBirth) || other.dateOfBirth == dateOfBirth)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.bio, bio) || other.bio == bio)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.address, address) || other.address == address)&&(identical(other.city, city) || other.city == city)&&(identical(other.country, country) || other.country == country)&&(identical(other.postalCode, postalCode) || other.postalCode == postalCode)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileModel&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.firstName, firstName) || other.firstName == firstName)&&(identical(other.lastName, lastName) || other.lastName == lastName)&&(identical(other.dateOfBirth, dateOfBirth) || other.dateOfBirth == dateOfBirth)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.bio, bio) || other.bio == bio)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.address, address) || other.address == address)&&(identical(other.city, city) || other.city == city)&&(identical(other.country, country) || other.country == country)&&(identical(other.postalCode, postalCode) || other.postalCode == postalCode)&&(identical(other.companyName, companyName) || other.companyName == companyName)&&(identical(other.taxId, taxId) || other.taxId == taxId)&&(identical(other.websiteUrl, websiteUrl) || other.websiteUrl == websiteUrl)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,userId,displayName,firstName,lastName,dateOfBirth,phoneNumber,bio,avatarUrl,address,city,country,postalCode,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,userId,displayName,firstName,lastName,dateOfBirth,phoneNumber,bio,avatarUrl,address,city,country,postalCode,companyName,taxId,websiteUrl,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'ProfileModel(userId: $userId, displayName: $displayName, firstName: $firstName, lastName: $lastName, dateOfBirth: $dateOfBirth, phoneNumber: $phoneNumber, bio: $bio, avatarUrl: $avatarUrl, address: $address, city: $city, country: $country, postalCode: $postalCode, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'ProfileModel(userId: $userId, displayName: $displayName, firstName: $firstName, lastName: $lastName, dateOfBirth: $dateOfBirth, phoneNumber: $phoneNumber, bio: $bio, avatarUrl: $avatarUrl, address: $address, city: $city, country: $country, postalCode: $postalCode, companyName: $companyName, taxId: $taxId, websiteUrl: $websiteUrl, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $ProfileModelCopyWith<$Res>  {
   factory $ProfileModelCopyWith(ProfileModel value, $Res Function(ProfileModel) _then) = _$ProfileModelCopyWithImpl;
 @useResult
 $Res call({
- String userId, String? displayName, String? firstName, String? lastName, DateTime? dateOfBirth, String? phoneNumber, String? bio, String? avatarUrl, String? address, String? city, String? country, String? postalCode, DateTime createdAt, DateTime updatedAt
+ String userId, String? displayName, String? firstName, String? lastName, DateTime? dateOfBirth, String? phoneNumber, String? bio, String? avatarUrl, String? address, String? city, String? country, String? postalCode, String? companyName, String? taxId, String? websiteUrl, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -65,7 +65,7 @@ class _$ProfileModelCopyWithImpl<$Res>
 
 /// Create a copy of ProfileModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? userId = null,Object? displayName = freezed,Object? firstName = freezed,Object? lastName = freezed,Object? dateOfBirth = freezed,Object? phoneNumber = freezed,Object? bio = freezed,Object? avatarUrl = freezed,Object? address = freezed,Object? city = freezed,Object? country = freezed,Object? postalCode = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? userId = null,Object? displayName = freezed,Object? firstName = freezed,Object? lastName = freezed,Object? dateOfBirth = freezed,Object? phoneNumber = freezed,Object? bio = freezed,Object? avatarUrl = freezed,Object? address = freezed,Object? city = freezed,Object? country = freezed,Object? postalCode = freezed,Object? companyName = freezed,Object? taxId = freezed,Object? websiteUrl = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_self.copyWith(
 userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,displayName: freezed == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
@@ -79,6 +79,9 @@ as String?,address: freezed == address ? _self.address : address // ignore: cast
 as String?,city: freezed == city ? _self.city : city // ignore: cast_nullable_to_non_nullable
 as String?,country: freezed == country ? _self.country : country // ignore: cast_nullable_to_non_nullable
 as String?,postalCode: freezed == postalCode ? _self.postalCode : postalCode // ignore: cast_nullable_to_non_nullable
+as String?,companyName: freezed == companyName ? _self.companyName : companyName // ignore: cast_nullable_to_non_nullable
+as String?,taxId: freezed == taxId ? _self.taxId : taxId // ignore: cast_nullable_to_non_nullable
+as String?,websiteUrl: freezed == websiteUrl ? _self.websiteUrl : websiteUrl // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
@@ -163,10 +166,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String userId,  String? displayName,  String? firstName,  String? lastName,  DateTime? dateOfBirth,  String? phoneNumber,  String? bio,  String? avatarUrl,  String? address,  String? city,  String? country,  String? postalCode,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String userId,  String? displayName,  String? firstName,  String? lastName,  DateTime? dateOfBirth,  String? phoneNumber,  String? bio,  String? avatarUrl,  String? address,  String? city,  String? country,  String? postalCode,  String? companyName,  String? taxId,  String? websiteUrl,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProfileModel() when $default != null:
-return $default(_that.userId,_that.displayName,_that.firstName,_that.lastName,_that.dateOfBirth,_that.phoneNumber,_that.bio,_that.avatarUrl,_that.address,_that.city,_that.country,_that.postalCode,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.userId,_that.displayName,_that.firstName,_that.lastName,_that.dateOfBirth,_that.phoneNumber,_that.bio,_that.avatarUrl,_that.address,_that.city,_that.country,_that.postalCode,_that.companyName,_that.taxId,_that.websiteUrl,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -184,10 +187,10 @@ return $default(_that.userId,_that.displayName,_that.firstName,_that.lastName,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String userId,  String? displayName,  String? firstName,  String? lastName,  DateTime? dateOfBirth,  String? phoneNumber,  String? bio,  String? avatarUrl,  String? address,  String? city,  String? country,  String? postalCode,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String userId,  String? displayName,  String? firstName,  String? lastName,  DateTime? dateOfBirth,  String? phoneNumber,  String? bio,  String? avatarUrl,  String? address,  String? city,  String? country,  String? postalCode,  String? companyName,  String? taxId,  String? websiteUrl,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _ProfileModel():
-return $default(_that.userId,_that.displayName,_that.firstName,_that.lastName,_that.dateOfBirth,_that.phoneNumber,_that.bio,_that.avatarUrl,_that.address,_that.city,_that.country,_that.postalCode,_that.createdAt,_that.updatedAt);}
+return $default(_that.userId,_that.displayName,_that.firstName,_that.lastName,_that.dateOfBirth,_that.phoneNumber,_that.bio,_that.avatarUrl,_that.address,_that.city,_that.country,_that.postalCode,_that.companyName,_that.taxId,_that.websiteUrl,_that.createdAt,_that.updatedAt);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -201,10 +204,10 @@ return $default(_that.userId,_that.displayName,_that.firstName,_that.lastName,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String userId,  String? displayName,  String? firstName,  String? lastName,  DateTime? dateOfBirth,  String? phoneNumber,  String? bio,  String? avatarUrl,  String? address,  String? city,  String? country,  String? postalCode,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String userId,  String? displayName,  String? firstName,  String? lastName,  DateTime? dateOfBirth,  String? phoneNumber,  String? bio,  String? avatarUrl,  String? address,  String? city,  String? country,  String? postalCode,  String? companyName,  String? taxId,  String? websiteUrl,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _ProfileModel() when $default != null:
-return $default(_that.userId,_that.displayName,_that.firstName,_that.lastName,_that.dateOfBirth,_that.phoneNumber,_that.bio,_that.avatarUrl,_that.address,_that.city,_that.country,_that.postalCode,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.userId,_that.displayName,_that.firstName,_that.lastName,_that.dateOfBirth,_that.phoneNumber,_that.bio,_that.avatarUrl,_that.address,_that.city,_that.country,_that.postalCode,_that.companyName,_that.taxId,_that.websiteUrl,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -216,7 +219,7 @@ return $default(_that.userId,_that.displayName,_that.firstName,_that.lastName,_t
 @JsonSerializable()
 
 class _ProfileModel implements ProfileModel {
-  const _ProfileModel({required this.userId, this.displayName, this.firstName, this.lastName, this.dateOfBirth, this.phoneNumber, this.bio, this.avatarUrl, this.address, this.city, this.country, this.postalCode, required this.createdAt, required this.updatedAt});
+  const _ProfileModel({required this.userId, this.displayName, this.firstName, this.lastName, this.dateOfBirth, this.phoneNumber, this.bio, this.avatarUrl, this.address, this.city, this.country, this.postalCode, this.companyName, this.taxId, this.websiteUrl, required this.createdAt, required this.updatedAt});
   factory _ProfileModel.fromJson(Map<String, dynamic> json) => _$ProfileModelFromJson(json);
 
 @override final  String userId;
@@ -231,6 +234,9 @@ class _ProfileModel implements ProfileModel {
 @override final  String? city;
 @override final  String? country;
 @override final  String? postalCode;
+@override final  String? companyName;
+@override final  String? taxId;
+@override final  String? websiteUrl;
 @override final  DateTime createdAt;
 @override final  DateTime updatedAt;
 
@@ -247,16 +253,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileModel&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.firstName, firstName) || other.firstName == firstName)&&(identical(other.lastName, lastName) || other.lastName == lastName)&&(identical(other.dateOfBirth, dateOfBirth) || other.dateOfBirth == dateOfBirth)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.bio, bio) || other.bio == bio)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.address, address) || other.address == address)&&(identical(other.city, city) || other.city == city)&&(identical(other.country, country) || other.country == country)&&(identical(other.postalCode, postalCode) || other.postalCode == postalCode)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileModel&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.firstName, firstName) || other.firstName == firstName)&&(identical(other.lastName, lastName) || other.lastName == lastName)&&(identical(other.dateOfBirth, dateOfBirth) || other.dateOfBirth == dateOfBirth)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.bio, bio) || other.bio == bio)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.address, address) || other.address == address)&&(identical(other.city, city) || other.city == city)&&(identical(other.country, country) || other.country == country)&&(identical(other.postalCode, postalCode) || other.postalCode == postalCode)&&(identical(other.companyName, companyName) || other.companyName == companyName)&&(identical(other.taxId, taxId) || other.taxId == taxId)&&(identical(other.websiteUrl, websiteUrl) || other.websiteUrl == websiteUrl)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,userId,displayName,firstName,lastName,dateOfBirth,phoneNumber,bio,avatarUrl,address,city,country,postalCode,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,userId,displayName,firstName,lastName,dateOfBirth,phoneNumber,bio,avatarUrl,address,city,country,postalCode,companyName,taxId,websiteUrl,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'ProfileModel(userId: $userId, displayName: $displayName, firstName: $firstName, lastName: $lastName, dateOfBirth: $dateOfBirth, phoneNumber: $phoneNumber, bio: $bio, avatarUrl: $avatarUrl, address: $address, city: $city, country: $country, postalCode: $postalCode, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'ProfileModel(userId: $userId, displayName: $displayName, firstName: $firstName, lastName: $lastName, dateOfBirth: $dateOfBirth, phoneNumber: $phoneNumber, bio: $bio, avatarUrl: $avatarUrl, address: $address, city: $city, country: $country, postalCode: $postalCode, companyName: $companyName, taxId: $taxId, websiteUrl: $websiteUrl, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -267,7 +273,7 @@ abstract mixin class _$ProfileModelCopyWith<$Res> implements $ProfileModelCopyWi
   factory _$ProfileModelCopyWith(_ProfileModel value, $Res Function(_ProfileModel) _then) = __$ProfileModelCopyWithImpl;
 @override @useResult
 $Res call({
- String userId, String? displayName, String? firstName, String? lastName, DateTime? dateOfBirth, String? phoneNumber, String? bio, String? avatarUrl, String? address, String? city, String? country, String? postalCode, DateTime createdAt, DateTime updatedAt
+ String userId, String? displayName, String? firstName, String? lastName, DateTime? dateOfBirth, String? phoneNumber, String? bio, String? avatarUrl, String? address, String? city, String? country, String? postalCode, String? companyName, String? taxId, String? websiteUrl, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -284,7 +290,7 @@ class __$ProfileModelCopyWithImpl<$Res>
 
 /// Create a copy of ProfileModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? userId = null,Object? displayName = freezed,Object? firstName = freezed,Object? lastName = freezed,Object? dateOfBirth = freezed,Object? phoneNumber = freezed,Object? bio = freezed,Object? avatarUrl = freezed,Object? address = freezed,Object? city = freezed,Object? country = freezed,Object? postalCode = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? userId = null,Object? displayName = freezed,Object? firstName = freezed,Object? lastName = freezed,Object? dateOfBirth = freezed,Object? phoneNumber = freezed,Object? bio = freezed,Object? avatarUrl = freezed,Object? address = freezed,Object? city = freezed,Object? country = freezed,Object? postalCode = freezed,Object? companyName = freezed,Object? taxId = freezed,Object? websiteUrl = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_ProfileModel(
 userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,displayName: freezed == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
@@ -298,6 +304,9 @@ as String?,address: freezed == address ? _self.address : address // ignore: cast
 as String?,city: freezed == city ? _self.city : city // ignore: cast_nullable_to_non_nullable
 as String?,country: freezed == country ? _self.country : country // ignore: cast_nullable_to_non_nullable
 as String?,postalCode: freezed == postalCode ? _self.postalCode : postalCode // ignore: cast_nullable_to_non_nullable
+as String?,companyName: freezed == companyName ? _self.companyName : companyName // ignore: cast_nullable_to_non_nullable
+as String?,taxId: freezed == taxId ? _self.taxId : taxId // ignore: cast_nullable_to_non_nullable
+as String?,websiteUrl: freezed == websiteUrl ? _self.websiteUrl : websiteUrl // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,

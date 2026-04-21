@@ -298,4 +298,226 @@ void main() {
       ).called(1);
     });
   });
+
+  // ---------------------------------------------------------------------------
+  // checkEmailExists
+  // ---------------------------------------------------------------------------
+  group('AuthRemoteDataSourceImpl - checkEmailExists', () {
+    test('returns true when email exists (200)', () async {
+      final r = MockResponse();
+      when(() => r.statusCode).thenReturn(200);
+      when(() => r.data).thenReturn({'exists': true});
+      when(
+        () => mockDio.post(any(), data: any(named: 'data')),
+      ).thenAnswer((_) async => r);
+
+      final result = await dataSource.checkEmailExists('test@example.com');
+
+      expect(result, isTrue);
+    });
+
+    test('returns false when email does not exist (201)', () async {
+      final r = MockResponse();
+      when(() => r.statusCode).thenReturn(201);
+      when(() => r.data).thenReturn({'exists': false});
+      when(
+        () => mockDio.post(any(), data: any(named: 'data')),
+      ).thenAnswer((_) async => r);
+
+      final result = await dataSource.checkEmailExists('new@example.com');
+
+      expect(result, isFalse);
+    });
+
+    test('throws ServerException on DioException', () async {
+      when(
+        () => mockDio.post(any(), data: any(named: 'data')),
+      ).thenThrow(DioException(requestOptions: RequestOptions(path: '')));
+
+      expect(
+        () => dataSource.checkEmailExists('test@example.com'),
+        throwsA(isA<ServerException>()),
+      );
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // getTermsInfo
+  // ---------------------------------------------------------------------------
+  group('AuthRemoteDataSourceImpl - getTermsInfo', () {
+    test('returns requiredVersion on 200', () async {
+      final r = MockResponse();
+      when(() => r.statusCode).thenReturn(200);
+      when(() => r.data).thenReturn({'requiredVersion': '2.0'});
+      when(() => mockDio.get(any())).thenAnswer((_) async => r);
+
+      final result = await dataSource.getTermsInfo();
+
+      expect(result, '2.0');
+    });
+
+    test('returns 1.0 when requiredVersion is null', () async {
+      final r = MockResponse();
+      when(() => r.statusCode).thenReturn(200);
+      when(() => r.data).thenReturn(<String, dynamic>{});
+      when(() => mockDio.get(any())).thenAnswer((_) async => r);
+
+      final result = await dataSource.getTermsInfo();
+
+      expect(result, '1.0');
+    });
+
+    test('throws ServerException on DioException', () async {
+      when(
+        () => mockDio.get(any()),
+      ).thenThrow(DioException(requestOptions: RequestOptions(path: '')));
+
+      expect(() => dataSource.getTermsInfo(), throwsA(isA<ServerException>()));
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // acceptTerms
+  // ---------------------------------------------------------------------------
+  group('AuthRemoteDataSourceImpl - acceptTerms', () {
+    test('completes on 200', () async {
+      final r = MockResponse();
+      when(() => r.statusCode).thenReturn(200);
+      when(
+        () => mockDio.post(any(), data: any(named: 'data')),
+      ).thenAnswer((_) async => r);
+
+      await expectLater(dataSource.acceptTerms('2.0'), completes);
+    });
+
+    test('completes on 201', () async {
+      final r = MockResponse();
+      when(() => r.statusCode).thenReturn(201);
+      when(
+        () => mockDio.post(any(), data: any(named: 'data')),
+      ).thenAnswer((_) async => r);
+
+      await expectLater(dataSource.acceptTerms('2.0'), completes);
+    });
+
+    test('throws ServerException on non-200/201 status', () async {
+      final r = MockResponse();
+      when(() => r.statusCode).thenReturn(400);
+      when(
+        () => mockDio.post(any(), data: any(named: 'data')),
+      ).thenAnswer((_) async => r);
+
+      expect(
+        () => dataSource.acceptTerms('2.0'),
+        throwsA(isA<ServerException>()),
+      );
+    });
+
+    test('throws ServerException on DioException', () async {
+      when(
+        () => mockDio.post(any(), data: any(named: 'data')),
+      ).thenThrow(DioException(requestOptions: RequestOptions(path: '')));
+
+      expect(
+        () => dataSource.acceptTerms('2.0'),
+        throwsA(isA<ServerException>()),
+      );
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // createProfile
+  // ---------------------------------------------------------------------------
+  group('AuthRemoteDataSourceImpl - createProfile', () {
+    test('completes successfully', () async {
+      final r = MockResponse();
+      when(() => r.statusCode).thenReturn(201);
+      when(
+        () => mockDio.post(any(), data: any(named: 'data')),
+      ).thenAnswer((_) async => r);
+
+      await expectLater(dataSource.createProfile('Ana', 'López'), completes);
+    });
+
+    test('posts correct data', () async {
+      final r = MockResponse();
+      when(() => r.statusCode).thenReturn(201);
+
+      Map<String, dynamic>? captured;
+      when(() => mockDio.post(any(), data: any(named: 'data'))).thenAnswer((
+        inv,
+      ) async {
+        captured =
+            inv.namedArguments[const Symbol('data')] as Map<String, dynamic>;
+        return r;
+      });
+
+      await dataSource.createProfile('Ana', 'López');
+
+      expect(captured!['first_name'], 'Ana');
+      expect(captured!['last_name'], 'López');
+    });
+
+    test('throws ServerException on DioException', () async {
+      when(
+        () => mockDio.post(any(), data: any(named: 'data')),
+      ).thenThrow(DioException(requestOptions: RequestOptions(path: '')));
+
+      expect(
+        () => dataSource.createProfile('Ana', 'López'),
+        throwsA(isA<ServerException>()),
+      );
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // checkUserStatus
+  // ---------------------------------------------------------------------------
+  group('AuthRemoteDataSourceImpl - checkUserStatus', () {
+    test('completes successfully on 200', () async {
+      final r = MockResponse();
+      when(() => r.statusCode).thenReturn(200);
+      when(() => mockDio.get(any())).thenAnswer((_) async => r);
+
+      await expectLater(dataSource.checkUserStatus(), completes);
+    });
+
+    test(
+      'throws ServerException on DioException with error code in body',
+      () async {
+        when(() => mockDio.get(any())).thenThrow(
+          DioException(
+            requestOptions: RequestOptions(path: ''),
+            response: Response(
+              requestOptions: RequestOptions(path: ''),
+              statusCode: 403,
+              data: {'code': 'terms_not_accepted'},
+            ),
+          ),
+        );
+
+        expect(
+          () => dataSource.checkUserStatus(),
+          throwsA(
+            isA<ServerException>().having(
+              (e) => e.code,
+              'code',
+              'terms_not_accepted',
+            ),
+          ),
+        );
+      },
+    );
+
+    test('throws ServerException on DioException without body', () async {
+      when(
+        () => mockDio.get(any()),
+      ).thenThrow(DioException(requestOptions: RequestOptions(path: '')));
+
+      expect(
+        () => dataSource.checkUserStatus(),
+        throwsA(isA<ServerException>()),
+      );
+    });
+  });
 }

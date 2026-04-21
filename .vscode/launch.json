@@ -17,22 +17,35 @@
             ]
         },
         {
-            "name": "What a Plan! (Movil)",
+            "name": "WAP – Development (Android)",
             "request": "launch",
             "type": "dart",
-            "program": "lib/main.dart"
+            "flutterMode": "debug",
+            "args": [
+                "--flavor",
+                "development",
+                "--dart-define=ENV=development"
+            ]
         },
         {
-            "name": "wap_app (profile mode)",
+            "name": "WAP – Production (Android)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "profile"
+            "flutterMode": "release",
+            "args": [
+                "--flavor",
+                "production",
+                "--dart-define=ENV=production"
+            ]
         },
         {
-            "name": "wap_app (release mode)",
+            "name": "WAP – Production (iOS)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "release"
+            "flutterMode": "release",
+            "args": [
+                "--dart-define=ENV=production"
+            ]
         }
     ]
 }

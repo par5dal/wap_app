@@ -20,14 +20,16 @@ class RegisterButtonPressed extends AuthEvent {
   final String password;
   final String firstName;
   final String lastName;
+  final String role;
   const RegisterButtonPressed({
     required this.email,
     required this.password,
     required this.firstName,
     required this.lastName,
+    this.role = 'CONSUMER',
   });
   @override
-  List<Object> get props => [email, password, firstName, lastName];
+  List<Object> get props => [email, password, firstName, lastName, role];
 }
 
 class GoogleSignInPressed extends AuthEvent {

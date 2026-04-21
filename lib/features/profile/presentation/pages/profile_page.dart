@@ -195,6 +195,7 @@ class _ProfilePageContentState extends State<_ProfilePageContent>
                 profile: profile,
                 isLoading: isLoading,
                 email: userProfile?.email,
+                role: userProfile?.role,
               ),
               const FavoritesTab(),
               const PromotersTab(),

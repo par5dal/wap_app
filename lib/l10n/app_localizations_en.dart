@@ -176,6 +176,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String eventCardTomorrowAt(String time) {
+    return 'Tomorrow, $time';
+  }
+
+  @override
+  String eventCardOngoing(String date) {
+    return 'Ongoing · until $date';
+  }
+
+  @override
   String eventCardDistance(String distance) {
     return '$distance km';
   }
@@ -285,7 +295,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retry => 'Retry';
 
   @override
+  String eventDetailEndDate(String date) {
+    return 'Until $date';
+  }
+
+  @override
   String get eventDetailDescription => 'Description';
+
+  @override
+  String get eventDetailSource => 'Source';
 
   @override
   String get eventDetailLocation => 'Location';
@@ -464,7 +482,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsNotifModerationEmailDesc =>
-      'Receive an email when an admin approves or rejects one of your events';
+      'Receive an email when an admin approves or rejects one of your plans';
 
   @override
   String get settingsNotifAllPaused => 'Mute all notifications';
@@ -784,6 +802,57 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forceUpdateButton => 'Update now';
 
   @override
+  String get settingsSectionTutorials => 'Tutorials';
+
+  @override
+  String get settingsTutorialReplay => 'Watch the tutorial again';
+
+  @override
+  String get settingsTutorialReplayDesc =>
+      'It will be shown the next time you open the app';
+
+  @override
+  String get settingsTutorialReplayConfirm =>
+      'Restart the app to see the tutorial';
+
+  @override
+  String get onboardingSlide1Title => 'Welcome to WAP!';
+
+  @override
+  String get onboardingSlide1Subtitle =>
+      'The app that connects people with amazing plans near them. Discover it in 30 seconds.';
+
+  @override
+  String get onboardingSlide2Title => 'Thousands of plans near you';
+
+  @override
+  String get onboardingSlide2Subtitle =>
+      'Explore the map, filter by category and find your next perfect plan in real time.';
+
+  @override
+  String get onboardingSlide3Title => 'Save what you love';
+
+  @override
+  String get onboardingSlide3Subtitle =>
+      'Mark your favourite plans, follow your promoters and get notified when they post something new.';
+
+  @override
+  String get onboardingSlide4Title => 'Got plans worth sharing?';
+
+  @override
+  String get onboardingSlide4Subtitle =>
+      'Create your promoter profile, publish your plans and reach thousands of people near you.';
+
+  @override
+  String get onboardingNext => 'Next';
+
+  @override
+  String get onboardingSkip => 'Skip';
+
+  @override
+  String get onboardingStart => 'Get started';
+
+  @override
   String get settingsSectionInfo => 'Information';
 
   @override
@@ -794,4 +863,298 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noConnectionBanner => 'No internet connection';
+
+  @override
+  String get next => 'Next';
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get fieldRequired => 'This field is required';
+
+  @override
+  String get genericError => 'Something went wrong. Please try again.';
+
+  @override
+  String get forPromotersHeroTitle => 'Reach more people with your plans';
+
+  @override
+  String get forPromotersHeroSubtitle =>
+      'Publish your plans, manage ticket sales and grow your audience.';
+
+  @override
+  String get forPromotersBenefitsTitle => 'What you get as a promoter';
+
+  @override
+  String get forPromotersBenefit1Title => 'Create & publish plans';
+
+  @override
+  String get forPromotersBenefit1Desc =>
+      'Set up your plan in minutes with our step-by-step wizard.';
+
+  @override
+  String get forPromotersBenefit2Title => 'Track your performance';
+
+  @override
+  String get forPromotersBenefit2Desc =>
+      'Monitor views, favorites and engagement in real time.';
+
+  @override
+  String get forPromotersBenefit3Title => 'Reach local audiences';
+
+  @override
+  String get forPromotersBenefit3Desc =>
+      'Your plans appear on the map for users nearby.';
+
+  @override
+  String get forPromotersBenefit4Title => 'Simple management';
+
+  @override
+  String get forPromotersBenefit4Desc =>
+      'Edit, publish, pause or delete your plans at any time.';
+
+  @override
+  String get forPromotersCtaRegister => 'Register for free';
+
+  @override
+  String get forPromotersCtaLogin => 'Already have an account? Login';
+
+  @override
+  String get upgradeToPromoterTitle => 'Become a Promoter';
+
+  @override
+  String get upgradeToPromoterHeroTitle => 'Take your plans to the next level';
+
+  @override
+  String get upgradeToPromoterHeroSubtitle =>
+      'Upgrade your account to start publishing plans and reaching thousands of people.';
+
+  @override
+  String get upgradeToPromoterBenefitsTitle => 'Promoter benefits';
+
+  @override
+  String get upgradeToPromoterBenefit1 => 'Create and publish plans on the map';
+
+  @override
+  String get upgradeToPromoterBenefit2 =>
+      'Analytics dashboard with views and favorites';
+
+  @override
+  String get upgradeToPromoterBenefit3 => 'Manage your venues and plan details';
+
+  @override
+  String get upgradeToPromoterBenefit4 => 'Grow your audience of followers';
+
+  @override
+  String get upgradeToPromoterCta => 'Upgrade my account';
+
+  @override
+  String get upgradeToPromoterSuccess => 'Your account has been upgraded!';
+
+  @override
+  String get dashboardTitle => 'My Plans';
+
+  @override
+  String get dashboardTabActive => 'Active';
+
+  @override
+  String get dashboardTabFinished => 'Finished';
+
+  @override
+  String get dashboardCreateEvent => 'Create plan';
+
+  @override
+  String get dashboardStatsTotalEvents => 'Total plans';
+
+  @override
+  String get dashboardStatsActiveEvents => 'Active';
+
+  @override
+  String get dashboardStatsTotalViews => 'Views';
+
+  @override
+  String get dashboardStatsTotalFavorites => 'Favorites';
+
+  @override
+  String get dashboardStatsFollowers => 'Followers';
+
+  @override
+  String get dashboardSearchHint => 'Search my plans…';
+
+  @override
+  String get dashboardNoEvents => 'No plans yet. Create your first one!';
+
+  @override
+  String get dashboardDeleteEvent => 'Delete plan';
+
+  @override
+  String get dashboardDeleteEventTitle => 'Delete this plan?';
+
+  @override
+  String get dashboardDeleteEventConfirm => 'This action cannot be undone.';
+
+  @override
+  String get manageEventCreateTitle => 'Create plan';
+
+  @override
+  String get manageEventEditTitle => 'Edit plan';
+
+  @override
+  String get manageEventStep1 => 'Details';
+
+  @override
+  String get manageEventStep2 => 'Venue';
+
+  @override
+  String get manageEventStep3 => 'Images';
+
+  @override
+  String get manageEventStep4 => 'Publish';
+
+  @override
+  String get manageEventTitle => 'Title';
+
+  @override
+  String get manageEventTitleHint => 'Give your plan a great name';
+
+  @override
+  String get manageEventDescription => 'Description';
+
+  @override
+  String get manageEventDescriptionHint => 'Tell people what to expect';
+
+  @override
+  String get manageEventPrice => 'Price (€)';
+
+  @override
+  String get manageEventPriceHint => '0 for free plans';
+
+  @override
+  String get manageEventDates => 'Dates';
+
+  @override
+  String get manageEventStartDate => 'Start';
+
+  @override
+  String get manageEventEndDate => 'End';
+
+  @override
+  String get manageEventCategories => 'Categories';
+
+  @override
+  String get manageEventPickDates => 'Pick dates';
+
+  @override
+  String get manageEventEndBeforeStart => 'End date must be after start date';
+
+  @override
+  String get manageEventPickCategory => 'Select at least one category';
+
+  @override
+  String get manageEventInvalidPrice => 'Enter a valid price';
+
+  @override
+  String get manageEventMyVenues => 'My venues';
+
+  @override
+  String get manageEventSearchVenue => 'Search';
+
+  @override
+  String get manageEventNoSavedVenues => 'No saved venues';
+
+  @override
+  String get manageEventSearchPlaceholder => 'Search for a venue or address…';
+
+  @override
+  String get manageEventNoResults => 'No results found';
+
+  @override
+  String get manageEventVenue => 'Venue';
+
+  @override
+  String get manageEventImagesTitle => 'Plan images';
+
+  @override
+  String get manageEventImagesSubtitle =>
+      'Add up to 3 images. The first one will be the cover photo.';
+
+  @override
+  String get manageEventImageSourceCamera => 'Camera';
+
+  @override
+  String get manageEventImageSourceGallery => 'Gallery';
+
+  @override
+  String get manageEventCameraPermissionDenied =>
+      'Camera permission is required to take photos';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get manageEventAddImage => 'Add image';
+
+  @override
+  String get manageEventFree => 'Free';
+
+  @override
+  String get manageEventPreviewBadge => 'Preview';
+
+  @override
+  String get manageEventPrimaryImage => 'Cover';
+
+  @override
+  String get manageEventImage => 'Image';
+
+  @override
+  String get manageEventImagesCount => 'Images';
+
+  @override
+  String get manageEventReviewTitle => 'Review & Publish';
+
+  @override
+  String get manageEventSaveDraft => 'Save as draft';
+
+  @override
+  String get manageEventPublish => 'Submit for review';
+
+  @override
+  String get manageEventCreateSuccess => 'Plan created successfully!';
+
+  @override
+  String get manageEventUpdateSuccess => 'Plan updated successfully!';
+
+  @override
+  String get eventStatusPublished => 'Published';
+
+  @override
+  String get eventStatusFinished => 'Finished';
+
+  @override
+  String get eventStatusCancelled => 'Cancelled';
+
+  @override
+  String get eventStatusPendingApproval => 'Pending approval';
+
+  @override
+  String get eventStatusRejected => 'Rejected';
+
+  @override
+  String get eventStatusDraft => 'Draft';
+
+  @override
+  String get eventStatusUnpublish => 'Unpublish';
+
+  @override
+  String get eventStatusDescription => 'Description';
+
+  @override
+  String get categoryAddMore => 'Add more categories';
+
+  @override
+  String get closeAction => 'Close';
 }

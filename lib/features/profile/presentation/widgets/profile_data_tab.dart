@@ -22,12 +22,14 @@ class ProfileDataTab extends StatefulWidget {
   final ProfileEntity? profile;
   final bool isLoading;
   final String? email;
+  final String? role;
 
   const ProfileDataTab({
     super.key,
     required this.profile,
     required this.isLoading,
     this.email,
+    this.role,
   });
 
   @override
@@ -39,6 +41,9 @@ class _ProfileDataTabState extends State<ProfileDataTab> {
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _addressController = TextEditingController();
+  final _companyNameController = TextEditingController();
+  final _taxIdController = TextEditingController();
+  final _websiteUrlController = TextEditingController();
   DateTime? _selectedDate;
   bool _hasInitializedFields = false;
   final Dio _dio = Dio();
@@ -58,6 +63,9 @@ class _ProfileDataTabState extends State<ProfileDataTab> {
       _firstNameController.text = widget.profile?.firstName ?? '';
       _lastNameController.text = widget.profile?.lastName ?? '';
       _addressController.text = widget.profile?.address ?? '';
+      _companyNameController.text = widget.profile?.companyName ?? '';
+      _taxIdController.text = widget.profile?.taxId ?? '';
+      _websiteUrlController.text = widget.profile?.websiteUrl ?? '';
       _selectedDate = widget.profile?.dateOfBirth;
       _hasInitializedFields = true;
     });
@@ -68,6 +76,9 @@ class _ProfileDataTabState extends State<ProfileDataTab> {
     _firstNameController.dispose();
     _lastNameController.dispose();
     _addressController.dispose();
+    _companyNameController.dispose();
+    _taxIdController.dispose();
+    _websiteUrlController.dispose();
     super.dispose();
   }
 
@@ -95,13 +106,13 @@ class _ProfileDataTabState extends State<ProfileDataTab> {
       ),
     );
 
-    if (result != null) {
-      final pickedFile = await picker.pickImage(source: result);
-      if (pickedFile != null && context.mounted) {
-        context.read<ProfileBloc>().add(
-          ProfileAvatarUploadRequested(File(pickedFile.path)),
-        );
-      }
+    if (result == null || !context.mounted) return;
+
+    final pickedFile = await picker.pickImage(source: result);
+    if (pickedFile != null && context.mounted) {
+      context.read<ProfileBloc>().add(
+        ProfileAvatarUploadRequested(File(pickedFile.path)),
+      );
     }
   }
 
@@ -163,6 +174,15 @@ class _ProfileDataTabState extends State<ProfileDataTab> {
           address: _addressController.text.trim().isEmpty
               ? null
               : _addressController.text.trim(),
+          companyName: _companyNameController.text.trim().isEmpty
+              ? null
+              : _companyNameController.text.trim(),
+          taxId: _taxIdController.text.trim().isEmpty
+              ? null
+              : _taxIdController.text.trim(),
+          websiteUrl: _websiteUrlController.text.trim().isEmpty
+              ? null
+              : _websiteUrlController.text.trim(),
         ),
       );
     }
@@ -291,6 +311,8 @@ class _ProfileDataTabState extends State<ProfileDataTab> {
                 _buildDateField(context),
                 const SizedBox(height: 14),
                 _buildAddressField(context),
+                if (widget.role == 'PROMOTER' || widget.role == 'ADMIN')
+                  ..._buildPromoterFields(),
                 const SizedBox(height: 20),
                 // Save button
                 SizedBox(
@@ -514,6 +536,46 @@ class _ProfileDataTabState extends State<ProfileDataTab> {
             : '',
       ),
     );
+  }
+
+  List<Widget> _buildPromoterFields() {
+    return [
+      const SizedBox(height: 14),
+      const Divider(),
+      const SizedBox(height: 8),
+      Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Text(
+          'Datos de promotor',
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey.shade600,
+            letterSpacing: 0.5,
+          ),
+        ),
+      ),
+      _buildTextField(
+        controller: _companyNameController,
+        label: 'Empresa / Organización',
+        hint: 'Nombre de tu empresa u organización',
+        enabled: !widget.isLoading,
+      ),
+      const SizedBox(height: 14),
+      _buildTextField(
+        controller: _taxIdController,
+        label: 'NIF / CIF',
+        hint: 'Número de identificación fiscal',
+        enabled: !widget.isLoading,
+      ),
+      const SizedBox(height: 14),
+      _buildTextField(
+        controller: _websiteUrlController,
+        label: 'Sitio web',
+        hint: 'https://tuempresa.com',
+        enabled: !widget.isLoading,
+      ),
+    ];
   }
 
   Widget _buildAddressField(BuildContext context) {

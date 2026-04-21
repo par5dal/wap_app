@@ -71,6 +71,22 @@
             }
         }
     },
+    "eventCardTomorrowAt": "Tomorrow, {time}",
+    "@eventCardTomorrowAt": {
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
+    "eventCardOngoing": "Ongoing · until {date}",
+    "@eventCardOngoing": {
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
     "eventCardDistance": "{distance} km",
     "@eventCardDistance": {
         "placeholders": {
@@ -113,7 +129,16 @@
     "profileNoFavorites": "You don't have favorite plans",
     "profileNoFollowing": "You're not following any promoter",
     "retry": "Retry",
+    "eventDetailEndDate": "Until {date}",
+    "@eventDetailEndDate": {
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
     "eventDetailDescription": "Description",
+    "eventDetailSource": "Source",
     "eventDetailLocation": "Location",
     "eventDetailOpenMap": "Get Directions",
     "eventDetailOrganizer": "Organizer",
@@ -171,7 +196,7 @@
     "settingsNotifNewEvents": "New plans from followed promoters",
     "settingsNotifNewEventsDesc": "Receive a push notification when a promoter you follow publishes a new plan",
     "settingsNotifModerationEmail": "Moderation emails",
-    "settingsNotifModerationEmailDesc": "Receive an email when an admin approves or rejects one of your events",
+    "settingsNotifModerationEmailDesc": "Receive an email when an admin approves or rejects one of your plans",
     "settingsNotifAllPaused": "Mute all notifications",
     "settingsNotifAllPausedDesc": "Temporarily disable all notifications without losing your settings",
     "settingsNotifSaved": "Preferences saved",
@@ -299,9 +324,126 @@
     "forceUpdateMessage": "A new version is available with important improvements and fixes. Please update the app to continue.",
     "forceUpdateButton": "Update now",
 
+    "settingsSectionTutorials": "Tutorials",
+    "settingsTutorialReplay": "Watch the tutorial again",
+    "settingsTutorialReplayDesc": "It will be shown the next time you open the app",
+    "settingsTutorialReplayConfirm": "Restart the app to see the tutorial",
+
+    "onboardingSlide1Title": "Welcome to WAP!",
+    "onboardingSlide1Subtitle": "The app that connects people with amazing plans near them. Discover it in 30 seconds.",
+    "onboardingSlide2Title": "Thousands of plans near you",
+    "onboardingSlide2Subtitle": "Explore the map, filter by category and find your next perfect plan in real time.",
+    "onboardingSlide3Title": "Save what you love",
+    "onboardingSlide3Subtitle": "Mark your favourite plans, follow your promoters and get notified when they post something new.",
+    "onboardingSlide4Title": "Got plans worth sharing?",
+    "onboardingSlide4Subtitle": "Create your promoter profile, publish your plans and reach thousands of people near you.",
+    "onboardingNext": "Next",
+    "onboardingSkip": "Skip",
+    "onboardingStart": "Get started",
+
     "settingsSectionInfo": "Information",
     "settingsInfoVersion": "Version",
     "settingsInfoRateApp": "Rate the app",
 
-    "noConnectionBanner": "No internet connection"
+    "noConnectionBanner": "No internet connection",
+
+    "next": "Next",
+    "back": "Back",
+    "delete": "Delete",
+    "fieldRequired": "This field is required",
+    "genericError": "Something went wrong. Please try again.",
+
+    "forPromotersHeroTitle": "Reach more people with your plans",
+    "forPromotersHeroSubtitle": "Publish your plans, manage ticket sales and grow your audience.",
+    "forPromotersBenefitsTitle": "What you get as a promoter",
+    "forPromotersBenefit1Title": "Create & publish plans",
+    "forPromotersBenefit1Desc": "Set up your plan in minutes with our step-by-step wizard.",
+    "forPromotersBenefit2Title": "Track your performance",
+    "forPromotersBenefit2Desc": "Monitor views, favorites and engagement in real time.",
+    "forPromotersBenefit3Title": "Reach local audiences",
+    "forPromotersBenefit3Desc": "Your plans appear on the map for users nearby.",
+    "forPromotersBenefit4Title": "Simple management",
+    "forPromotersBenefit4Desc": "Edit, publish, pause or delete your plans at any time.",
+    "forPromotersCtaRegister": "Register for free",
+    "forPromotersCtaLogin": "Already have an account? Login",
+
+    "upgradeToPromoterTitle": "Become a Promoter",
+    "upgradeToPromoterHeroTitle": "Take your plans to the next level",
+    "upgradeToPromoterHeroSubtitle": "Upgrade your account to start publishing plans and reaching thousands of people.",
+    "upgradeToPromoterBenefitsTitle": "Promoter benefits",
+    "upgradeToPromoterBenefit1": "Create and publish plans on the map",
+    "upgradeToPromoterBenefit2": "Analytics dashboard with views and favorites",
+    "upgradeToPromoterBenefit3": "Manage your venues and plan details",
+    "upgradeToPromoterBenefit4": "Grow your audience of followers",
+    "upgradeToPromoterCta": "Upgrade my account",
+    "upgradeToPromoterSuccess": "Your account has been upgraded!",
+
+    "dashboardTitle": "My Plans",
+    "dashboardTabActive": "Active",
+    "dashboardTabFinished": "Finished",
+    "dashboardCreateEvent": "Create plan",
+    "dashboardStatsTotalEvents": "Total plans",
+    "dashboardStatsActiveEvents": "Active",
+    "dashboardStatsTotalViews": "Views",
+    "dashboardStatsTotalFavorites": "Favorites",
+    "dashboardStatsFollowers": "Followers",
+    "dashboardSearchHint": "Search my plans…",
+    "dashboardNoEvents": "No plans yet. Create your first one!",
+    "dashboardDeleteEvent": "Delete plan",
+    "dashboardDeleteEventTitle": "Delete this plan?",
+    "dashboardDeleteEventConfirm": "This action cannot be undone.",
+
+    "manageEventCreateTitle": "Create plan",
+    "manageEventEditTitle": "Edit plan",
+    "manageEventStep1": "Details",
+    "manageEventStep2": "Venue",
+    "manageEventStep3": "Images",
+    "manageEventStep4": "Publish",
+    "manageEventTitle": "Title",
+    "manageEventTitleHint": "Give your plan a great name",
+    "manageEventDescription": "Description",
+    "manageEventDescriptionHint": "Tell people what to expect",
+    "manageEventPrice": "Price (€)",
+    "manageEventPriceHint": "0 for free plans",
+    "manageEventDates": "Dates",
+    "manageEventStartDate": "Start",
+    "manageEventEndDate": "End",
+    "manageEventCategories": "Categories",
+    "manageEventPickDates": "Pick dates",
+    "manageEventEndBeforeStart": "End date must be after start date",
+    "manageEventPickCategory": "Select at least one category",
+    "manageEventInvalidPrice": "Enter a valid price",
+    "manageEventMyVenues": "My venues",
+    "manageEventSearchVenue": "Search",
+    "manageEventNoSavedVenues": "No saved venues",
+    "manageEventSearchPlaceholder": "Search for a venue or address…",
+    "manageEventNoResults": "No results found",
+    "manageEventVenue": "Venue",
+    "manageEventImagesTitle": "Plan images",
+    "manageEventImagesSubtitle": "Add up to 3 images. The first one will be the cover photo.",
+    "manageEventImageSourceCamera": "Camera",
+    "manageEventImageSourceGallery": "Gallery",
+    "manageEventCameraPermissionDenied": "Camera permission is required to take photos",
+    "settings": "Settings",
+    "manageEventAddImage": "Add image",
+    "manageEventFree": "Free",
+    "manageEventPreviewBadge": "Preview",
+    "manageEventPrimaryImage": "Cover",
+    "manageEventImage": "Image",
+    "manageEventImagesCount": "Images",
+    "manageEventReviewTitle": "Review & Publish",
+    "manageEventSaveDraft": "Save as draft",
+    "manageEventPublish": "Submit for review",
+    "manageEventCreateSuccess": "Plan created successfully!",
+    "manageEventUpdateSuccess": "Plan updated successfully!",
+    "eventStatusPublished": "Published",
+    "eventStatusFinished": "Finished",
+    "eventStatusCancelled": "Cancelled",
+    "eventStatusPendingApproval": "Pending approval",
+    "eventStatusRejected": "Rejected",
+    "eventStatusDraft": "Draft",
+    "eventStatusUnpublish": "Unpublish",
+    "eventStatusDescription": "Description",
+    "categoryAddMore": "Add more categories",
+    "closeAction": "Close"
 }

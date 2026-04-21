@@ -5,6 +5,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wap_app/core/services/analytics_service.dart';
 import 'package:wap_app/core/services/app_version_service.dart';
 import 'package:wap_app/core/services/blocked_users_service.dart';
@@ -25,6 +26,8 @@ class MockBlockedUsersService extends Mock implements BlockedUsersService {}
 
 class MockAppVersionService extends Mock implements AppVersionService {}
 
+class MockSharedPreferences extends Mock implements SharedPreferences {}
+
 void main() {
   late AppBloc bloc;
   late MockAuthRepository mockAuthRepository;
@@ -33,6 +36,7 @@ void main() {
   late MockLocaleCubit mockLocaleCubit;
   late MockBlockedUsersService mockBlockedUsersService;
   late MockAppVersionService mockAppVersionService;
+  late MockSharedPreferences mockSharedPreferences;
 
   setUp(() {
     mockAuthRepository = MockAuthRepository();
@@ -41,6 +45,7 @@ void main() {
     mockLocaleCubit = MockLocaleCubit();
     mockBlockedUsersService = MockBlockedUsersService();
     mockAppVersionService = MockAppVersionService();
+    mockSharedPreferences = MockSharedPreferences();
 
     // Register mocks used via sl<> inside AppBloc
     final sl = GetIt.instance;
@@ -55,6 +60,9 @@ void main() {
     }
     if (!sl.isRegistered<AppVersionService>()) {
       sl.registerSingleton<AppVersionService>(mockAppVersionService);
+    }
+    if (!sl.isRegistered<SharedPreferences>()) {
+      sl.registerSingleton<SharedPreferences>(mockSharedPreferences);
     }
 
     // Stub all fire-and-forget calls
@@ -80,6 +88,9 @@ void main() {
     when(
       () => mockAppVersionService.isUpdateRequired(),
     ).thenAnswer((_) async => false);
+    when(
+      () => mockSharedPreferences.remove(any()),
+    ).thenAnswer((_) async => true);
 
     bloc = AppBloc(
       authRepository: mockAuthRepository,

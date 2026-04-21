@@ -412,6 +412,18 @@ abstract class AppLocalizations {
   /// **'Hoy, {time}'**
   String eventCardTodayAt(String time);
 
+  /// No description provided for @eventCardTomorrowAt.
+  ///
+  /// In es, this message translates to:
+  /// **'Mañana, {time}'**
+  String eventCardTomorrowAt(String time);
+
+  /// No description provided for @eventCardOngoing.
+  ///
+  /// In es, this message translates to:
+  /// **'En curso · hasta {date}'**
+  String eventCardOngoing(String date);
+
   /// No description provided for @eventCardDistance.
   ///
   /// In es, this message translates to:
@@ -622,11 +634,23 @@ abstract class AppLocalizations {
   /// **'Reintentar'**
   String get retry;
 
+  /// No description provided for @eventDetailEndDate.
+  ///
+  /// In es, this message translates to:
+  /// **'Hasta el {date}'**
+  String eventDetailEndDate(String date);
+
   /// No description provided for @eventDetailDescription.
   ///
   /// In es, this message translates to:
   /// **'Descripción'**
   String get eventDetailDescription;
+
+  /// No description provided for @eventDetailSource.
+  ///
+  /// In es, this message translates to:
+  /// **'Fuente'**
+  String get eventDetailSource;
 
   /// No description provided for @eventDetailLocation.
   ///
@@ -973,7 +997,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsNotifModerationEmailDesc.
   ///
   /// In es, this message translates to:
-  /// **'Recibe un email cuando un admin aprueba o rechaza uno de tus eventos'**
+  /// **'Recibe un email cuando un admin aprueba o rechaza uno de tus planes'**
   String get settingsNotifModerationEmailDesc;
 
   /// No description provided for @settingsNotifAllPaused.
@@ -1576,6 +1600,96 @@ abstract class AppLocalizations {
   /// **'Actualizar ahora'**
   String get forceUpdateButton;
 
+  /// No description provided for @settingsSectionTutorials.
+  ///
+  /// In es, this message translates to:
+  /// **'Tutoriales'**
+  String get settingsSectionTutorials;
+
+  /// No description provided for @settingsTutorialReplay.
+  ///
+  /// In es, this message translates to:
+  /// **'Volver a ver el tutorial'**
+  String get settingsTutorialReplay;
+
+  /// No description provided for @settingsTutorialReplayDesc.
+  ///
+  /// In es, this message translates to:
+  /// **'Se mostrará la próxima vez que abras la app'**
+  String get settingsTutorialReplayDesc;
+
+  /// No description provided for @settingsTutorialReplayConfirm.
+  ///
+  /// In es, this message translates to:
+  /// **'Reinicia la app para ver el tutorial'**
+  String get settingsTutorialReplayConfirm;
+
+  /// No description provided for @onboardingSlide1Title.
+  ///
+  /// In es, this message translates to:
+  /// **'¡Bienvenido a WAP!'**
+  String get onboardingSlide1Title;
+
+  /// No description provided for @onboardingSlide1Subtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'La app que conecta personas con planes increíbles cerca de ellas. Descúbrela en 30 segundos.'**
+  String get onboardingSlide1Subtitle;
+
+  /// No description provided for @onboardingSlide2Title.
+  ///
+  /// In es, this message translates to:
+  /// **'Miles de planes cerca de ti'**
+  String get onboardingSlide2Title;
+
+  /// No description provided for @onboardingSlide2Subtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Explora el mapa, filtra por categoría y encuentra tu próximo plan perfecto en tiempo real.'**
+  String get onboardingSlide2Subtitle;
+
+  /// No description provided for @onboardingSlide3Title.
+  ///
+  /// In es, this message translates to:
+  /// **'Guarda lo que te gusta'**
+  String get onboardingSlide3Title;
+
+  /// No description provided for @onboardingSlide3Subtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Marca tus planes favoritos, sigue a tus promotores preferidos y recibe notificaciones cuando publiquen algo nuevo.'**
+  String get onboardingSlide3Subtitle;
+
+  /// No description provided for @onboardingSlide4Title.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Tienes planes que compartir?'**
+  String get onboardingSlide4Title;
+
+  /// No description provided for @onboardingSlide4Subtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Crea tu perfil de promotor, publica tus planes y llega a miles de personas cerca de ti.'**
+  String get onboardingSlide4Subtitle;
+
+  /// No description provided for @onboardingNext.
+  ///
+  /// In es, this message translates to:
+  /// **'Siguiente'**
+  String get onboardingNext;
+
+  /// No description provided for @onboardingSkip.
+  ///
+  /// In es, this message translates to:
+  /// **'Saltar'**
+  String get onboardingSkip;
+
+  /// No description provided for @onboardingStart.
+  ///
+  /// In es, this message translates to:
+  /// **'Empezar'**
+  String get onboardingStart;
+
   /// No description provided for @settingsSectionInfo.
   ///
   /// In es, this message translates to:
@@ -1599,6 +1713,576 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Sin conexión a internet'**
   String get noConnectionBanner;
+
+  /// No description provided for @next.
+  ///
+  /// In es, this message translates to:
+  /// **'Siguiente'**
+  String get next;
+
+  /// No description provided for @back.
+  ///
+  /// In es, this message translates to:
+  /// **'Atrás'**
+  String get back;
+
+  /// No description provided for @delete.
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar'**
+  String get delete;
+
+  /// No description provided for @fieldRequired.
+  ///
+  /// In es, this message translates to:
+  /// **'Este campo es obligatorio'**
+  String get fieldRequired;
+
+  /// No description provided for @genericError.
+  ///
+  /// In es, this message translates to:
+  /// **'Algo salió mal. Por favor, inténtalo de nuevo.'**
+  String get genericError;
+
+  /// No description provided for @forPromotersHeroTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Llega a más personas con tus planes'**
+  String get forPromotersHeroTitle;
+
+  /// No description provided for @forPromotersHeroSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Publica tus planes, gestiona las ventas y haz crecer tu audiencia.'**
+  String get forPromotersHeroSubtitle;
+
+  /// No description provided for @forPromotersBenefitsTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Lo que obtienes como promotor'**
+  String get forPromotersBenefitsTitle;
+
+  /// No description provided for @forPromotersBenefit1Title.
+  ///
+  /// In es, this message translates to:
+  /// **'Crea y publica planes'**
+  String get forPromotersBenefit1Title;
+
+  /// No description provided for @forPromotersBenefit1Desc.
+  ///
+  /// In es, this message translates to:
+  /// **'Configura tu plan en minutos con nuestro asistente paso a paso.'**
+  String get forPromotersBenefit1Desc;
+
+  /// No description provided for @forPromotersBenefit2Title.
+  ///
+  /// In es, this message translates to:
+  /// **'Sigue tu rendimiento'**
+  String get forPromotersBenefit2Title;
+
+  /// No description provided for @forPromotersBenefit2Desc.
+  ///
+  /// In es, this message translates to:
+  /// **'Monitorea visitas, favoritos y engagement en tiempo real.'**
+  String get forPromotersBenefit2Desc;
+
+  /// No description provided for @forPromotersBenefit3Title.
+  ///
+  /// In es, this message translates to:
+  /// **'Llega a audiencias locales'**
+  String get forPromotersBenefit3Title;
+
+  /// No description provided for @forPromotersBenefit3Desc.
+  ///
+  /// In es, this message translates to:
+  /// **'Tus planes aparecen en el mapa para usuarios cercanos.'**
+  String get forPromotersBenefit3Desc;
+
+  /// No description provided for @forPromotersBenefit4Title.
+  ///
+  /// In es, this message translates to:
+  /// **'Gestión sencilla'**
+  String get forPromotersBenefit4Title;
+
+  /// No description provided for @forPromotersBenefit4Desc.
+  ///
+  /// In es, this message translates to:
+  /// **'Edita, publica, pausa o elimina tus planes en cualquier momento.'**
+  String get forPromotersBenefit4Desc;
+
+  /// No description provided for @forPromotersCtaRegister.
+  ///
+  /// In es, this message translates to:
+  /// **'Regístrate gratis'**
+  String get forPromotersCtaRegister;
+
+  /// No description provided for @forPromotersCtaLogin.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Ya tienes cuenta? Inicia sesión'**
+  String get forPromotersCtaLogin;
+
+  /// No description provided for @upgradeToPromoterTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Hazte promotor'**
+  String get upgradeToPromoterTitle;
+
+  /// No description provided for @upgradeToPromoterHeroTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Lleva tus planes al siguiente nivel'**
+  String get upgradeToPromoterHeroTitle;
+
+  /// No description provided for @upgradeToPromoterHeroSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Mejora tu cuenta para empezar a publicar planes y llegar a miles de personas.'**
+  String get upgradeToPromoterHeroSubtitle;
+
+  /// No description provided for @upgradeToPromoterBenefitsTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Ventajas de ser promotor'**
+  String get upgradeToPromoterBenefitsTitle;
+
+  /// No description provided for @upgradeToPromoterBenefit1.
+  ///
+  /// In es, this message translates to:
+  /// **'Crea y publica planes en el mapa'**
+  String get upgradeToPromoterBenefit1;
+
+  /// No description provided for @upgradeToPromoterBenefit2.
+  ///
+  /// In es, this message translates to:
+  /// **'Panel de análisis con visitas y favoritos'**
+  String get upgradeToPromoterBenefit2;
+
+  /// No description provided for @upgradeToPromoterBenefit3.
+  ///
+  /// In es, this message translates to:
+  /// **'Gestiona tus locales y detalles de plan'**
+  String get upgradeToPromoterBenefit3;
+
+  /// No description provided for @upgradeToPromoterBenefit4.
+  ///
+  /// In es, this message translates to:
+  /// **'Haz crecer tu audiencia de seguidores'**
+  String get upgradeToPromoterBenefit4;
+
+  /// No description provided for @upgradeToPromoterCta.
+  ///
+  /// In es, this message translates to:
+  /// **'Mejorar mi cuenta'**
+  String get upgradeToPromoterCta;
+
+  /// No description provided for @upgradeToPromoterSuccess.
+  ///
+  /// In es, this message translates to:
+  /// **'¡Tu cuenta ha sido mejorada!'**
+  String get upgradeToPromoterSuccess;
+
+  /// No description provided for @dashboardTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Mis Planes'**
+  String get dashboardTitle;
+
+  /// No description provided for @dashboardTabActive.
+  ///
+  /// In es, this message translates to:
+  /// **'Activos'**
+  String get dashboardTabActive;
+
+  /// No description provided for @dashboardTabFinished.
+  ///
+  /// In es, this message translates to:
+  /// **'Finalizados'**
+  String get dashboardTabFinished;
+
+  /// No description provided for @dashboardCreateEvent.
+  ///
+  /// In es, this message translates to:
+  /// **'Crear plan'**
+  String get dashboardCreateEvent;
+
+  /// No description provided for @dashboardStatsTotalEvents.
+  ///
+  /// In es, this message translates to:
+  /// **'Total planes'**
+  String get dashboardStatsTotalEvents;
+
+  /// No description provided for @dashboardStatsActiveEvents.
+  ///
+  /// In es, this message translates to:
+  /// **'Activos'**
+  String get dashboardStatsActiveEvents;
+
+  /// No description provided for @dashboardStatsTotalViews.
+  ///
+  /// In es, this message translates to:
+  /// **'Visitas'**
+  String get dashboardStatsTotalViews;
+
+  /// No description provided for @dashboardStatsTotalFavorites.
+  ///
+  /// In es, this message translates to:
+  /// **'Favoritos'**
+  String get dashboardStatsTotalFavorites;
+
+  /// No description provided for @dashboardStatsFollowers.
+  ///
+  /// In es, this message translates to:
+  /// **'Seguidores'**
+  String get dashboardStatsFollowers;
+
+  /// No description provided for @dashboardSearchHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Buscar mis planes…'**
+  String get dashboardSearchHint;
+
+  /// No description provided for @dashboardNoEvents.
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no tienes planes. ¡Crea el primero!'**
+  String get dashboardNoEvents;
+
+  /// No description provided for @dashboardDeleteEvent.
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar plan'**
+  String get dashboardDeleteEvent;
+
+  /// No description provided for @dashboardDeleteEventTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Eliminar este plan?'**
+  String get dashboardDeleteEventTitle;
+
+  /// No description provided for @dashboardDeleteEventConfirm.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta acción no se puede deshacer.'**
+  String get dashboardDeleteEventConfirm;
+
+  /// No description provided for @manageEventCreateTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Crear plan'**
+  String get manageEventCreateTitle;
+
+  /// No description provided for @manageEventEditTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar plan'**
+  String get manageEventEditTitle;
+
+  /// No description provided for @manageEventStep1.
+  ///
+  /// In es, this message translates to:
+  /// **'Detalles'**
+  String get manageEventStep1;
+
+  /// No description provided for @manageEventStep2.
+  ///
+  /// In es, this message translates to:
+  /// **'Local'**
+  String get manageEventStep2;
+
+  /// No description provided for @manageEventStep3.
+  ///
+  /// In es, this message translates to:
+  /// **'Imágenes'**
+  String get manageEventStep3;
+
+  /// No description provided for @manageEventStep4.
+  ///
+  /// In es, this message translates to:
+  /// **'Publicar'**
+  String get manageEventStep4;
+
+  /// No description provided for @manageEventTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Título'**
+  String get manageEventTitle;
+
+  /// No description provided for @manageEventTitleHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Dale un nombre genial a tu plan'**
+  String get manageEventTitleHint;
+
+  /// No description provided for @manageEventDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'Descripción'**
+  String get manageEventDescription;
+
+  /// No description provided for @manageEventDescriptionHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuéntale a la gente qué pueden esperar'**
+  String get manageEventDescriptionHint;
+
+  /// No description provided for @manageEventPrice.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio (€)'**
+  String get manageEventPrice;
+
+  /// No description provided for @manageEventPriceHint.
+  ///
+  /// In es, this message translates to:
+  /// **'0 para planes gratuitos'**
+  String get manageEventPriceHint;
+
+  /// No description provided for @manageEventDates.
+  ///
+  /// In es, this message translates to:
+  /// **'Fechas'**
+  String get manageEventDates;
+
+  /// No description provided for @manageEventStartDate.
+  ///
+  /// In es, this message translates to:
+  /// **'Inicio'**
+  String get manageEventStartDate;
+
+  /// No description provided for @manageEventEndDate.
+  ///
+  /// In es, this message translates to:
+  /// **'Fin'**
+  String get manageEventEndDate;
+
+  /// No description provided for @manageEventCategories.
+  ///
+  /// In es, this message translates to:
+  /// **'Categorías'**
+  String get manageEventCategories;
+
+  /// No description provided for @manageEventPickDates.
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar fechas'**
+  String get manageEventPickDates;
+
+  /// No description provided for @manageEventEndBeforeStart.
+  ///
+  /// In es, this message translates to:
+  /// **'La fecha de fin debe ser posterior a la de inicio'**
+  String get manageEventEndBeforeStart;
+
+  /// No description provided for @manageEventPickCategory.
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona al menos una categoría'**
+  String get manageEventPickCategory;
+
+  /// No description provided for @manageEventInvalidPrice.
+  ///
+  /// In es, this message translates to:
+  /// **'Introduce un precio válido'**
+  String get manageEventInvalidPrice;
+
+  /// No description provided for @manageEventMyVenues.
+  ///
+  /// In es, this message translates to:
+  /// **'Mis locales'**
+  String get manageEventMyVenues;
+
+  /// No description provided for @manageEventSearchVenue.
+  ///
+  /// In es, this message translates to:
+  /// **'Buscar'**
+  String get manageEventSearchVenue;
+
+  /// No description provided for @manageEventNoSavedVenues.
+  ///
+  /// In es, this message translates to:
+  /// **'No tienes locales guardados'**
+  String get manageEventNoSavedVenues;
+
+  /// No description provided for @manageEventSearchPlaceholder.
+  ///
+  /// In es, this message translates to:
+  /// **'Buscar local o dirección…'**
+  String get manageEventSearchPlaceholder;
+
+  /// No description provided for @manageEventNoResults.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin resultados'**
+  String get manageEventNoResults;
+
+  /// No description provided for @manageEventVenue.
+  ///
+  /// In es, this message translates to:
+  /// **'Local'**
+  String get manageEventVenue;
+
+  /// No description provided for @manageEventImagesTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Imágenes del plan'**
+  String get manageEventImagesTitle;
+
+  /// No description provided for @manageEventImagesSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Añade hasta 3 imágenes. La primera será la foto de portada.'**
+  String get manageEventImagesSubtitle;
+
+  /// No description provided for @manageEventImageSourceCamera.
+  ///
+  /// In es, this message translates to:
+  /// **'Cámara'**
+  String get manageEventImageSourceCamera;
+
+  /// No description provided for @manageEventImageSourceGallery.
+  ///
+  /// In es, this message translates to:
+  /// **'Galería'**
+  String get manageEventImageSourceGallery;
+
+  /// No description provided for @manageEventCameraPermissionDenied.
+  ///
+  /// In es, this message translates to:
+  /// **'Se necesita permiso de cámara para tomar fotos'**
+  String get manageEventCameraPermissionDenied;
+
+  /// No description provided for @settings.
+  ///
+  /// In es, this message translates to:
+  /// **'Ajustes'**
+  String get settings;
+
+  /// No description provided for @manageEventAddImage.
+  ///
+  /// In es, this message translates to:
+  /// **'Añadir imagen'**
+  String get manageEventAddImage;
+
+  /// No description provided for @manageEventFree.
+  ///
+  /// In es, this message translates to:
+  /// **'Gratis'**
+  String get manageEventFree;
+
+  /// No description provided for @manageEventPreviewBadge.
+  ///
+  /// In es, this message translates to:
+  /// **'Vista previa'**
+  String get manageEventPreviewBadge;
+
+  /// No description provided for @manageEventPrimaryImage.
+  ///
+  /// In es, this message translates to:
+  /// **'Portada'**
+  String get manageEventPrimaryImage;
+
+  /// No description provided for @manageEventImage.
+  ///
+  /// In es, this message translates to:
+  /// **'Imagen'**
+  String get manageEventImage;
+
+  /// No description provided for @manageEventImagesCount.
+  ///
+  /// In es, this message translates to:
+  /// **'Imágenes'**
+  String get manageEventImagesCount;
+
+  /// No description provided for @manageEventReviewTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Revisar y publicar'**
+  String get manageEventReviewTitle;
+
+  /// No description provided for @manageEventSaveDraft.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar borrador'**
+  String get manageEventSaveDraft;
+
+  /// No description provided for @manageEventPublish.
+  ///
+  /// In es, this message translates to:
+  /// **'Enviar a revisión'**
+  String get manageEventPublish;
+
+  /// No description provided for @manageEventCreateSuccess.
+  ///
+  /// In es, this message translates to:
+  /// **'¡Plan creado con éxito!'**
+  String get manageEventCreateSuccess;
+
+  /// No description provided for @manageEventUpdateSuccess.
+  ///
+  /// In es, this message translates to:
+  /// **'¡Plan actualizado con éxito!'**
+  String get manageEventUpdateSuccess;
+
+  /// No description provided for @eventStatusPublished.
+  ///
+  /// In es, this message translates to:
+  /// **'Publicado'**
+  String get eventStatusPublished;
+
+  /// No description provided for @eventStatusFinished.
+  ///
+  /// In es, this message translates to:
+  /// **'Finalizado'**
+  String get eventStatusFinished;
+
+  /// No description provided for @eventStatusCancelled.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelado'**
+  String get eventStatusCancelled;
+
+  /// No description provided for @eventStatusPendingApproval.
+  ///
+  /// In es, this message translates to:
+  /// **'En revisión'**
+  String get eventStatusPendingApproval;
+
+  /// No description provided for @eventStatusRejected.
+  ///
+  /// In es, this message translates to:
+  /// **'Rechazado'**
+  String get eventStatusRejected;
+
+  /// No description provided for @eventStatusDraft.
+  ///
+  /// In es, this message translates to:
+  /// **'Borrador'**
+  String get eventStatusDraft;
+
+  /// No description provided for @eventStatusUnpublish.
+  ///
+  /// In es, this message translates to:
+  /// **'Despublicar'**
+  String get eventStatusUnpublish;
+
+  /// No description provided for @eventStatusDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'Descripción'**
+  String get eventStatusDescription;
+
+  /// No description provided for @categoryAddMore.
+  ///
+  /// In es, this message translates to:
+  /// **'Agregar más categorías'**
+  String get categoryAddMore;
+
+  /// No description provided for @closeAction.
+  ///
+  /// In es, this message translates to:
+  /// **'Cerrar'**
+  String get closeAction;
 }
 
 class _AppLocalizationsDelegate

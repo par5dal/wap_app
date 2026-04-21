@@ -21,6 +21,9 @@ sealed class ProfileModel with _$ProfileModel {
     String? city,
     String? country,
     String? postalCode,
+    String? companyName,
+    String? taxId,
+    String? websiteUrl,
     required DateTime createdAt,
     required DateTime updatedAt,
   }) = _ProfileModel;
@@ -52,6 +55,9 @@ sealed class ProfileModel with _$ProfileModel {
       city: json['city'] as String?,
       country: json['country'] as String?,
       postalCode: json['postal_code'] as String?,
+      companyName: json['company_name'] as String?,
+      taxId: json['tax_id'] as String?,
+      websiteUrl: json['website_url'] as String?,
       createdAt: createdAt,
       updatedAt: updatedAt,
     );
@@ -77,6 +83,9 @@ sealed class ProfileModel with _$ProfileModel {
       'city': city,
       'country': country,
       'postal_code': postalCode,
+      'company_name': companyName,
+      'tax_id': taxId,
+      'website_url': websiteUrl,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
@@ -99,6 +108,9 @@ extension ProfileModelX on ProfileModel {
       city: city,
       country: country,
       postalCode: postalCode,
+      companyName: companyName,
+      taxId: taxId,
+      websiteUrl: websiteUrl,
       createdAt: createdAt,
       updatedAt: updatedAt,
     );

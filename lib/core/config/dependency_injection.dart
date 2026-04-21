@@ -7,6 +7,7 @@ import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:wap_app/core/config/env_config.dart';
 import 'package:path_provider/path_provider.dart';
 
 // AUTH Feature
@@ -111,6 +112,32 @@ import 'package:wap_app/features/auth/domain/usecases/get_terms_info.dart';
 import 'package:wap_app/features/auth/domain/usecases/accept_terms.dart';
 import 'package:wap_app/features/auth/domain/usecases/get_legal_document.dart';
 
+// 🆕 UPGRADE TO PROMOTER Feature
+import 'package:wap_app/features/upgrade_to_promoter/data/datasources/upgrade_to_promoter_remote_data_source.dart';
+import 'package:wap_app/features/upgrade_to_promoter/data/repositories/upgrade_to_promoter_repository_impl.dart';
+import 'package:wap_app/features/upgrade_to_promoter/domain/repositories/upgrade_to_promoter_repository.dart';
+import 'package:wap_app/features/upgrade_to_promoter/domain/usecases/upgrade_to_promoter_usecase.dart';
+import 'package:wap_app/features/upgrade_to_promoter/presentation/bloc/upgrade_to_promoter_bloc.dart';
+
+// 🆕 PROMOTER DASHBOARD Feature
+import 'package:wap_app/features/promoter_dashboard/data/datasources/promoter_dashboard_remote_data_source.dart';
+import 'package:wap_app/features/promoter_dashboard/data/repositories/promoter_dashboard_repository_impl.dart';
+import 'package:wap_app/features/promoter_dashboard/domain/repositories/promoter_dashboard_repository.dart';
+import 'package:wap_app/features/promoter_dashboard/domain/usecases/delete_my_event_usecase.dart';
+import 'package:wap_app/features/promoter_dashboard/domain/usecases/get_my_events_stats_usecase.dart';
+import 'package:wap_app/features/promoter_dashboard/domain/usecases/get_my_events_usecase.dart';
+import 'package:wap_app/features/promoter_dashboard/presentation/bloc/dashboard/dashboard_bloc.dart';
+
+// 🆕 MANAGE EVENT Feature
+import 'package:wap_app/features/manage_event/data/datasources/manage_event_remote_data_source.dart';
+import 'package:wap_app/features/manage_event/data/repositories/manage_event_repository_impl.dart';
+import 'package:wap_app/features/manage_event/domain/repositories/manage_event_repository.dart';
+import 'package:wap_app/features/manage_event/domain/usecases/get_categories_usecase.dart';
+import 'package:wap_app/features/manage_event/domain/usecases/get_my_venues_usecase.dart';
+import 'package:wap_app/features/manage_event/domain/usecases/get_upload_signature_usecase.dart';
+import 'package:wap_app/features/manage_event/domain/usecases/save_event_usecase.dart';
+import 'package:wap_app/features/manage_event/presentation/bloc/manage_event_bloc.dart';
+
 final sl = GetIt.instance;
 
 Future<void> initDI() async {
@@ -140,7 +167,7 @@ Future<void> initDI() async {
   sl.registerLazySingleton<Dio>(() {
     final dio = Dio(
       BaseOptions(
-        baseUrl: dotenv.env['API_BASE_URL']!,
+        baseUrl: dotenv.env['API_BASE_URL_${EnvConfig.suffix}']!,
         connectTimeout: AppConstants.connectionTimeout,
         receiveTimeout: AppConstants.receiveTimeout,
       ),
@@ -202,9 +229,7 @@ Future<void> initDI() async {
   // AÑADIR INTERCEPTOR DE AUTH AHORA
   // ========================================
   // Ahora que AppBloc existe, añadimos el interceptor de autenticación
-  sl<Dio>().interceptors.add(
-    DioInterceptor(dio: sl(), appBloc: sl()),
-  );
+  sl<Dio>().interceptors.add(DioInterceptor(dio: sl(), appBloc: sl()));
 
   // ========================================
   // FEATURE: AUTH - UseCases y BLoCs
@@ -416,4 +441,62 @@ Future<void> initDI() async {
   sl.registerLazySingleton(() => GetTermsInfoUseCase(sl()));
   sl.registerLazySingleton(() => AcceptTermsUseCase(sl()));
   sl.registerLazySingleton(() => GetLegalDocumentUseCase(sl()));
+
+  // ========================================
+  // FEATURE: UPGRADE TO PROMOTER
+  // ========================================
+  sl.registerLazySingleton<UpgradeToPromoterRemoteDataSource>(
+    () => UpgradeToPromoterRemoteDataSourceImpl(dio: sl()),
+  );
+  sl.registerLazySingleton<UpgradeToPromoterRepository>(
+    () => UpgradeToPromoterRepositoryImpl(remoteDataSource: sl()),
+  );
+  sl.registerLazySingleton(() => UpgradeToPromoterUseCase(sl()));
+  sl.registerFactory(
+    () => UpgradeToPromoterBloc(upgradeToPromoter: sl(), prefs: sl()),
+  );
+
+  // ========================================
+  // FEATURE: PROMOTER DASHBOARD
+  // ========================================
+  sl.registerLazySingleton<PromoterDashboardRemoteDataSource>(
+    () => PromoterDashboardRemoteDataSourceImpl(dio: sl()),
+  );
+  sl.registerLazySingleton<PromoterDashboardRepository>(
+    () => PromoterDashboardRepositoryImpl(remoteDataSource: sl()),
+  );
+  sl.registerLazySingleton(() => GetMyEventsUseCase(sl()));
+  sl.registerLazySingleton(() => GetMyEventsStatsUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteMyEventUseCase(sl()));
+  sl.registerFactory(
+    () => DashboardBloc(
+      getMyEvents: sl(),
+      getMyEventsStats: sl(),
+      deleteMyEvent: sl(),
+      manageEventRepository: sl(),
+    ),
+  );
+
+  // ========================================
+  // FEATURE: MANAGE EVENT
+  // ========================================
+  sl.registerLazySingleton<ManageEventRemoteDataSource>(
+    () => ManageEventRemoteDataSourceImpl(dio: sl()),
+  );
+  sl.registerLazySingleton<ManageEventRepository>(
+    () => ManageEventRepositoryImpl(remoteDataSource: sl()),
+  );
+  sl.registerLazySingleton(() => GetCategoriesUseCase(sl()));
+  sl.registerLazySingleton(() => GetMyVenuesUseCase(sl()));
+  sl.registerLazySingleton(() => SaveEventUseCase(sl()));
+  sl.registerLazySingleton(() => GetUploadSignatureUseCase(sl()));
+  sl.registerFactory(
+    () => ManageEventBloc(
+      getCategories: sl(),
+      getMyVenues: sl(),
+      saveEvent: sl(),
+      getUploadSignature: sl(),
+      repository: sl(),
+    ),
+  );
 }

@@ -1,8 +1,10 @@
 // lib/features/home/presentation/widgets/map_toolbar.dart
 
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wap_app/core/config/dependency_injection.dart';
 import 'package:wap_app/core/router/app_router.dart';
 import 'package:wap_app/core/theme/app_colors.dart';
@@ -11,7 +13,6 @@ import 'package:wap_app/features/notifications/presentation/bloc/notifications_b
 import 'package:wap_app/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:wap_app/presentation/bloc/app/app_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class MapToolbar extends StatelessWidget {
   final VoidCallback onListTap;
@@ -182,14 +183,20 @@ class MapToolbar extends StatelessWidget {
                 icon: Icons.store_outlined,
                 title: context.l10n.toolbarDiscoverPromoterAccess,
                 subtitle: context.l10n.toolbarDiscoverPromoterAccessSubtitle,
-                onTap: () async {
+                onTap: () {
                   Navigator.pop(context);
-                  final locale = Localizations.localeOf(context).languageCode;
-                  final url = Uri.parse(
-                    'https://www.whataplan.net/$locale/for-promoters',
-                  );
-                  if (await canLaunchUrl(url)) {
-                    await launchUrl(url, mode: LaunchMode.externalApplication);
+                  final appState = sl<AppBloc>().state;
+                  if (appState.status != AuthStatus.authenticated) {
+                    context.push('/for-promoters');
+                  } else {
+                    final userRole = sl<SharedPreferences>().getString(
+                      'user_role',
+                    );
+                    if (userRole == 'PROMOTER' || userRole == 'ADMIN') {
+                      context.push('/promoter-dashboard');
+                    } else {
+                      context.push('/upgrade-to-promoter');
+                    }
                   }
                 },
               ),

@@ -71,6 +71,22 @@
             }
         }
     },
+    "eventCardTomorrowAt": "Amanhã, {time}",
+    "@eventCardTomorrowAt": {
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
+    "eventCardOngoing": "Em curso · até {date}",
+    "@eventCardOngoing": {
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
     "eventCardDistance": "{distance} km",
     "@eventCardDistance": {
         "placeholders": {
@@ -113,7 +129,16 @@
     "profileNoFavorites": "Não tens planos favoritos",
     "profileNoFollowing": "Não estás a seguir nenhum promotor",
     "retry": "Tentar novamente",
+    "eventDetailEndDate": "Até {date}",
+    "@eventDetailEndDate": {
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
     "eventDetailDescription": "Descrição",
+    "eventDetailSource": "Origem",
     "eventDetailLocation": "Localização",
     "eventDetailOpenMap": "Como chegar",
     "eventDetailOrganizer": "Organizador",
@@ -171,7 +196,7 @@
     "settingsNotifNewEvents": "Novos planos de promotores seguidos",
     "settingsNotifNewEventsDesc": "Recebe uma notifica\u00e7\u00e3o push quando um promotor que segues publica um novo plano",
     "settingsNotifModerationEmail": "Emails de modera\u00e7\u00e3o",
-    "settingsNotifModerationEmailDesc": "Recebe um email quando um admin aprova ou rejeita um dos teus eventos",
+    "settingsNotifModerationEmailDesc": "Recebe um email quando um admin aprova ou rejeita um dos teus planos",
     "settingsNotifAllPaused": "Silenciar todas as notifica\u00e7\u00f5es",
     "settingsNotifAllPausedDesc": "Desativa todas as notifica\u00e7\u00f5es temporariamente sem perder a tua configura\u00e7\u00e3o",
     "settingsNotifSaved": "Preferências guardadas",
@@ -299,9 +324,126 @@
     "forceUpdateMessage": "Há uma nova versão disponível com melhorias e correções importantes. Atualiza a app para continuar.",
     "forceUpdateButton": "Atualizar agora",
 
+    "settingsSectionTutorials": "Tutoriais",
+    "settingsTutorialReplay": "Ver o tutorial novamente",
+    "settingsTutorialReplayDesc": "Será mostrado na próxima vez que abrir a app",
+    "settingsTutorialReplayConfirm": "Reinicia a app para ver o tutorial",
+
+    "onboardingSlide1Title": "Bem-vindo ao WAP!",
+    "onboardingSlide1Subtitle": "A app que conecta pessoas com planos incríveis perto delas. Descobre-a em 30 segundos.",
+    "onboardingSlide2Title": "Milhares de planos perto de ti",
+    "onboardingSlide2Subtitle": "Explora o mapa, filtra por categoria e encontra o teu próximo plano perfeito em tempo real.",
+    "onboardingSlide3Title": "Guarda o que gostas",
+    "onboardingSlide3Subtitle": "Marca os teus planos favoritos, segue os teus promotores preferidos e recebe notificações quando publicarem algo novo.",
+    "onboardingSlide4Title": "Tens planos para partilhar?",
+    "onboardingSlide4Subtitle": "Cria o teu perfil de promotor, publica os teus planos e alcança milhares de pessoas perto de ti.",
+    "onboardingNext": "Seguinte",
+    "onboardingSkip": "Saltar",
+    "onboardingStart": "Começar",
+
     "settingsSectionInfo": "Informação",
     "settingsInfoVersion": "Versão",
     "settingsInfoRateApp": "Avaliar a app",
 
-    "noConnectionBanner": "Sem ligação à internet"
+    "noConnectionBanner": "Sem ligação à internet",
+
+    "next": "Seguinte",
+    "back": "Voltar",
+    "delete": "Eliminar",
+    "fieldRequired": "Este campo é obrigatório",
+    "genericError": "Algo correu mal. Por favor, tente novamente.",
+
+    "forPromotersHeroTitle": "Alcance mais pessoas com os seus planos",
+    "forPromotersHeroSubtitle": "Publique os seus planos, gira as vendas e aumente a sua audiência.",
+    "forPromotersBenefitsTitle": "O que obtém como promotor",
+    "forPromotersBenefit1Title": "Crie e publique planos",
+    "forPromotersBenefit1Desc": "Configure o seu plano em minutos com o nosso assistente passo a passo.",
+    "forPromotersBenefit2Title": "Acompanhe o seu desempenho",
+    "forPromotersBenefit2Desc": "Monitorize visualizações, favoritos e engagement em tempo real.",
+    "forPromotersBenefit3Title": "Alcance audiências locais",
+    "forPromotersBenefit3Desc": "Os seus planos aparecem no mapa para utilizadores próximos.",
+    "forPromotersBenefit4Title": "Gestão simples",
+    "forPromotersBenefit4Desc": "Edite, publique, pause ou elimine os seus planos a qualquer momento.",
+    "forPromotersCtaRegister": "Registar gratuitamente",
+    "forPromotersCtaLogin": "Já tem conta? Iniciar sessão",
+
+    "upgradeToPromoterTitle": "Torne-se Promotor",
+    "upgradeToPromoterHeroTitle": "Leve os seus planos ao próximo nível",
+    "upgradeToPromoterHeroSubtitle": "Atualize a sua conta para começar a publicar planos e alcançar milhares de pessoas.",
+    "upgradeToPromoterBenefitsTitle": "Vantagens de ser promotor",
+    "upgradeToPromoterBenefit1": "Crie e publique planos no mapa",
+    "upgradeToPromoterBenefit2": "Painel de análise com visualizações e favoritos",
+    "upgradeToPromoterBenefit3": "Gira os seus locais e detalhes dos planos",
+    "upgradeToPromoterBenefit4": "Aumente a sua audiência de seguidores",
+    "upgradeToPromoterCta": "Atualizar a minha conta",
+    "upgradeToPromoterSuccess": "A sua conta foi atualizada!",
+
+    "dashboardTitle": "Os Meus Planos",
+    "dashboardTabActive": "Ativos",
+    "dashboardTabFinished": "Finalizados",
+    "dashboardCreateEvent": "Criar plano",
+    "dashboardStatsTotalEvents": "Total de planos",
+    "dashboardStatsActiveEvents": "Ativos",
+    "dashboardStatsTotalViews": "Visualizações",
+    "dashboardStatsTotalFavorites": "Favoritos",
+    "dashboardStatsFollowers": "Seguidores",
+    "dashboardSearchHint": "Pesquisar os meus planos…",
+    "dashboardNoEvents": "Ainda não tem planos. Crie o primeiro!",
+    "dashboardDeleteEvent": "Eliminar plano",
+    "dashboardDeleteEventTitle": "Eliminar este plano?",
+    "dashboardDeleteEventConfirm": "Esta ação não pode ser desfeita.",
+
+    "manageEventCreateTitle": "Criar plano",
+    "manageEventEditTitle": "Editar plano",
+    "manageEventStep1": "Detalhes",
+    "manageEventStep2": "Local",
+    "manageEventStep3": "Imagens",
+    "manageEventStep4": "Publicar",
+    "manageEventTitle": "Título",
+    "manageEventTitleHint": "Dê um nome fantástico ao seu plano",
+    "manageEventDescription": "Descrição",
+    "manageEventDescriptionHint": "Conte às pessoas o que podem esperar",
+    "manageEventPrice": "Preço (€)",
+    "manageEventPriceHint": "0 para planos gratuitos",
+    "manageEventDates": "Datas",
+    "manageEventStartDate": "Início",
+    "manageEventEndDate": "Fim",
+    "manageEventCategories": "Categorias",
+    "manageEventPickDates": "Selecionar datas",
+    "manageEventEndBeforeStart": "A data de fim deve ser posterior à de início",
+    "manageEventPickCategory": "Selecione pelo menos uma categoria",
+    "manageEventInvalidPrice": "Introduza um preço válido",
+    "manageEventMyVenues": "Os meus locais",
+    "manageEventSearchVenue": "Pesquisar",
+    "manageEventNoSavedVenues": "Não tem locais guardados",
+    "manageEventSearchPlaceholder": "Pesquisar local ou endereço…",
+    "manageEventNoResults": "Sem resultados",
+    "manageEventVenue": "Local",
+    "manageEventImagesTitle": "Imagens do plano",
+    "manageEventImagesSubtitle": "Adicione até 3 imagens. A primeira será a foto de capa.",
+    "manageEventImageSourceCamera": "Câmara",
+    "manageEventImageSourceGallery": "Galeria",
+    "manageEventCameraPermissionDenied": "É necessária permissão de câmara para tirar fotos",
+    "settings": "Definições",
+    "manageEventAddImage": "Adicionar imagem",
+    "manageEventFree": "Grátis",
+    "manageEventPreviewBadge": "Pré-visualização",
+    "manageEventPrimaryImage": "Capa",
+    "manageEventImage": "Imagem",
+    "manageEventImagesCount": "Imagens",
+    "manageEventReviewTitle": "Rever e publicar",
+    "manageEventSaveDraft": "Guardar rascunho",
+    "manageEventPublish": "Enviar para revisão",
+    "manageEventCreateSuccess": "Plano criado com sucesso!",
+    "manageEventUpdateSuccess": "Plano atualizado com sucesso!",
+    "eventStatusPublished": "Publicado",
+    "eventStatusFinished": "Finalizado",
+    "eventStatusCancelled": "Cancelado",
+    "eventStatusPendingApproval": "Em revisão",
+    "eventStatusRejected": "Rejeitado",
+    "eventStatusDraft": "Rascunho",
+    "eventStatusUnpublish": "Desativar publicação",
+    "eventStatusDescription": "Descrição",
+    "categoryAddMore": "Adicionar mais categorias",
+    "closeAction": "Fechar"
 }

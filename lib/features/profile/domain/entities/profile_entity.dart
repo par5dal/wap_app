@@ -15,6 +15,9 @@ class ProfileEntity extends Equatable {
   final String? city;
   final String? country;
   final String? postalCode;
+  final String? companyName;
+  final String? taxId;
+  final String? websiteUrl;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -31,6 +34,9 @@ class ProfileEntity extends Equatable {
     this.city,
     this.country,
     this.postalCode,
+    this.companyName,
+    this.taxId,
+    this.websiteUrl,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -63,6 +69,9 @@ class ProfileEntity extends Equatable {
     city,
     country,
     postalCode,
+    companyName,
+    taxId,
+    websiteUrl,
     updatedAt,
   ];
 }

@@ -47,6 +47,7 @@ class Event extends Equatable {
   final String? promoterEmail;
   final bool isFavorite; // Si está en favoritos del usuario autenticado
   final String? status; // PUBLISHED | FINISHED
+  final String? sourceUrl; // URL del origen del evento
 
   const Event({
     required this.id,
@@ -74,6 +75,7 @@ class Event extends Equatable {
     this.promoterEmail,
     this.isFavorite = false, // Por defecto false
     this.status,
+    this.sourceUrl,
   });
 
   @override
@@ -101,6 +103,7 @@ class Event extends Equatable {
     promoterEmail,
     isFavorite,
     status,
+    sourceUrl,
   ];
 
   Event copyWith({
@@ -129,6 +132,7 @@ class Event extends Equatable {
     String? promoterEmail,
     bool? isFavorite,
     String? status,
+    String? sourceUrl,
   }) {
     return Event(
       id: id ?? this.id,
@@ -156,6 +160,7 @@ class Event extends Equatable {
       promoterEmail: promoterEmail ?? this.promoterEmail,
       isFavorite: isFavorite ?? this.isFavorite,
       status: status ?? this.status,
+      sourceUrl: sourceUrl ?? this.sourceUrl,
     );
   }
 }

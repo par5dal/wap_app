@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:wap_app/core/config/env_config.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:wap_app/core/constants/api_constants.dart';
 import 'package:wap_app/core/error/app_exception.dart';
@@ -21,8 +22,9 @@ abstract class AuthRemoteDataSource {
     String email,
     String password,
     String firstName,
-    String lastName,
-  );
+    String lastName, {
+    String role = 'CONSUMER',
+  });
 
   /// Login nativo con Google. No requiere parámetros.
   Future<TokenModel> loginWithGoogle();
@@ -130,13 +132,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     String email,
     String password,
     String firstName,
-    String lastName,
-  ) async {
+    String lastName, {
+    String role = 'CONSUMER',
+  }) async {
     try {
       // 1. El backend crea el usuario en Firebase + BD
       await dio.post(
         ApiConstants.registerEndpoint,
-        data: {'email': email, 'password': password, 'role': 'CONSUMER'},
+        data: {'email': email, 'password': password, 'role': role},
       );
 
       // 2. Iniciar sesión local con Firebase SDK
@@ -187,7 +190,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<TokenModel> loginWithGoogle() async {
     try {
       final googleUser = await GoogleSignIn(
-        serverClientId: dotenv.env['GOOGLE_SERVER_CLIENT_ID'],
+        serverClientId:
+            dotenv.env['GOOGLE_SERVER_CLIENT_ID_${EnvConfig.suffix}'],
       ).signIn();
       if (googleUser == null) {
         throw const ServerException(
@@ -269,8 +273,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         );
       }
       throw ServerException(
-        message: 'Error de autorización de Apple',
-        code: 'apple_auth_error',
+        message:
+            'Error de autorización de Apple [code=${e.code.name}]: ${e.message}',
+        code: 'apple_auth_error_${e.code.name}',
         originalError: e,
         stackTrace: stackTrace,
       );

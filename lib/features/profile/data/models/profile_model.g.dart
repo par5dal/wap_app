@@ -22,6 +22,9 @@ _ProfileModel _$ProfileModelFromJson(Map<String, dynamic> json) =>
       city: json['city'] as String?,
       country: json['country'] as String?,
       postalCode: json['postalCode'] as String?,
+      companyName: json['companyName'] as String?,
+      taxId: json['taxId'] as String?,
+      websiteUrl: json['websiteUrl'] as String?,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
@@ -40,6 +43,9 @@ Map<String, dynamic> _$ProfileModelToJson(_ProfileModel instance) =>
       'city': instance.city,
       'country': instance.country,
       'postalCode': instance.postalCode,
+      'companyName': instance.companyName,
+      'taxId': instance.taxId,
+      'websiteUrl': instance.websiteUrl,
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),
     };

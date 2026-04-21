@@ -23,6 +23,9 @@ class ProfileUpdateRequested extends ProfileEvent {
   final String? city;
   final String? country;
   final String? postalCode;
+  final String? companyName;
+  final String? taxId;
+  final String? websiteUrl;
 
   const ProfileUpdateRequested({
     this.firstName,
@@ -34,6 +37,9 @@ class ProfileUpdateRequested extends ProfileEvent {
     this.city,
     this.country,
     this.postalCode,
+    this.companyName,
+    this.taxId,
+    this.websiteUrl,
   });
 
   @override
@@ -47,6 +53,9 @@ class ProfileUpdateRequested extends ProfileEvent {
     city,
     country,
     postalCode,
+    companyName,
+    taxId,
+    websiteUrl,
   ];
 }
 

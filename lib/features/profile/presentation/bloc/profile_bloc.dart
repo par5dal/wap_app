@@ -94,6 +94,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     if (event.city != null) updateData['city'] = event.city;
     if (event.country != null) updateData['country'] = event.country;
     if (event.postalCode != null) updateData['postal_code'] = event.postalCode;
+    if (event.companyName != null) {
+      updateData['company_name'] = event.companyName;
+    }
+    if (event.taxId != null) updateData['tax_id'] = event.taxId;
+    if (event.websiteUrl != null) updateData['website_url'] = event.websiteUrl;
 
     final result = await updateMyProfile(updateData);
 

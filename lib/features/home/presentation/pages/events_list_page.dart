@@ -39,22 +39,23 @@ class _EventsListPageState extends State<EventsListPage> {
     final currentState = bloc.state;
 
     // Extraer categorías únicas de todos los eventos cargados
-    final availableCategories =
-        currentState.allEvents
-            .where((event) => event.categorySlug != null)
-            .map((event) => event.categorySlug!)
-            .toSet()
-            .toList()
-          ..sort();
-
-    // Mapa de SVG por slug de categoría (mismo que usan los markers del mapa)
+    // (categoría principal + todas las secundarias)
     final categorySvgMap = <String, String?>{};
     for (final event in currentState.allEvents) {
-      if (event.categorySlug != null &&
-          !categorySvgMap.containsKey(event.categorySlug)) {
-        categorySvgMap[event.categorySlug!] = event.categorySvg;
+      if (event.categories != null && event.categories!.isNotEmpty) {
+        for (final cat in event.categories!) {
+          if (!categorySvgMap.containsKey(cat.slug)) {
+            categorySvgMap[cat.slug] = cat.svg;
+          }
+        }
+      } else if (event.categorySlug != null) {
+        // Fallback para eventos que solo tienen categoría principal
+        if (!categorySvgMap.containsKey(event.categorySlug)) {
+          categorySvgMap[event.categorySlug!] = event.categorySvg;
+        }
       }
     }
+    final availableCategories = categorySvgMap.keys.toList()..sort();
 
     showGeneralDialog(
       context: context,

@@ -64,7 +64,7 @@ class _FilterOverlayState extends State<FilterOverlay> {
     super.initState();
     _startDate = widget.selectedStartDate;
     _endDate = widget.selectedEndDate;
-    _selectedCategories = widget.selectedCategories ?? [];
+    _selectedCategories = List.from(widget.selectedCategories ?? []);
     _onlyFree = widget.onlyFree ?? false;
     _minPriceController = TextEditingController(
       text: widget.minPrice?.toStringAsFixed(0) ?? '',

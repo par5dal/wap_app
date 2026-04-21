@@ -202,9 +202,9 @@ class _NotificationsViewState extends State<_NotificationsView> {
     final data = notification.data;
     if (data == null) return null;
     final type = data['type'] as String?;
-    final eventId = data['event_id']?.toString();
-    if (type == 'new_event' && eventId != null && eventId.isNotEmpty) {
-      return '/events/$eventId';
+    final slug = data['slug']?.toString();
+    if (type == 'new_event' && slug != null && slug.isNotEmpty) {
+      return '/events/$slug';
     }
     return null;
   }

@@ -18,6 +18,7 @@ mixin _$EventModel {
  String get id; String get title; String? get description; String? get slug; DateTime get startDatetime; DateTime? get endDatetime; String? get price; String? get currency; String? get status; String? get moderationStatus; String? get moderationComment; DateTime? get moderatedAt; VenueModel get venue; CategoryModel? get category; List<CategoryModel>? get categories;// Lista completa de categorías
  List<EventImageModel>? get images; UserWithProfileModel? get promoter; String? get promoterDirectId;// promoter_id del tile (cuando no viene objeto promoter completo)
  bool get isFavorite;// Si está en favoritos del usuario
+ String? get sourceUrl;// URL del origen del evento
  DateTime? get createdAt; DateTime? get updatedAt; DateTime? get deletedAt;
 /// Create a copy of EventModel
 /// with the given fields replaced by the non-null parameter values.
@@ -31,16 +32,16 @@ $EventModelCopyWith<EventModel> get copyWith => _$EventModelCopyWithImpl<EventMo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.startDatetime, startDatetime) || other.startDatetime == startDatetime)&&(identical(other.endDatetime, endDatetime) || other.endDatetime == endDatetime)&&(identical(other.price, price) || other.price == price)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.status, status) || other.status == status)&&(identical(other.moderationStatus, moderationStatus) || other.moderationStatus == moderationStatus)&&(identical(other.moderationComment, moderationComment) || other.moderationComment == moderationComment)&&(identical(other.moderatedAt, moderatedAt) || other.moderatedAt == moderatedAt)&&(identical(other.venue, venue) || other.venue == venue)&&(identical(other.category, category) || other.category == category)&&const DeepCollectionEquality().equals(other.categories, categories)&&const DeepCollectionEquality().equals(other.images, images)&&(identical(other.promoter, promoter) || other.promoter == promoter)&&(identical(other.promoterDirectId, promoterDirectId) || other.promoterDirectId == promoterDirectId)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.startDatetime, startDatetime) || other.startDatetime == startDatetime)&&(identical(other.endDatetime, endDatetime) || other.endDatetime == endDatetime)&&(identical(other.price, price) || other.price == price)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.status, status) || other.status == status)&&(identical(other.moderationStatus, moderationStatus) || other.moderationStatus == moderationStatus)&&(identical(other.moderationComment, moderationComment) || other.moderationComment == moderationComment)&&(identical(other.moderatedAt, moderatedAt) || other.moderatedAt == moderatedAt)&&(identical(other.venue, venue) || other.venue == venue)&&(identical(other.category, category) || other.category == category)&&const DeepCollectionEquality().equals(other.categories, categories)&&const DeepCollectionEquality().equals(other.images, images)&&(identical(other.promoter, promoter) || other.promoter == promoter)&&(identical(other.promoterDirectId, promoterDirectId) || other.promoterDirectId == promoterDirectId)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.sourceUrl, sourceUrl) || other.sourceUrl == sourceUrl)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,title,description,slug,startDatetime,endDatetime,price,currency,status,moderationStatus,moderationComment,moderatedAt,venue,category,const DeepCollectionEquality().hash(categories),const DeepCollectionEquality().hash(images),promoter,promoterDirectId,isFavorite,createdAt,updatedAt,deletedAt]);
+int get hashCode => Object.hashAll([runtimeType,id,title,description,slug,startDatetime,endDatetime,price,currency,status,moderationStatus,moderationComment,moderatedAt,venue,category,const DeepCollectionEquality().hash(categories),const DeepCollectionEquality().hash(images),promoter,promoterDirectId,isFavorite,sourceUrl,createdAt,updatedAt,deletedAt]);
 
 @override
 String toString() {
-  return 'EventModel(id: $id, title: $title, description: $description, slug: $slug, startDatetime: $startDatetime, endDatetime: $endDatetime, price: $price, currency: $currency, status: $status, moderationStatus: $moderationStatus, moderationComment: $moderationComment, moderatedAt: $moderatedAt, venue: $venue, category: $category, categories: $categories, images: $images, promoter: $promoter, promoterDirectId: $promoterDirectId, isFavorite: $isFavorite, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  return 'EventModel(id: $id, title: $title, description: $description, slug: $slug, startDatetime: $startDatetime, endDatetime: $endDatetime, price: $price, currency: $currency, status: $status, moderationStatus: $moderationStatus, moderationComment: $moderationComment, moderatedAt: $moderatedAt, venue: $venue, category: $category, categories: $categories, images: $images, promoter: $promoter, promoterDirectId: $promoterDirectId, isFavorite: $isFavorite, sourceUrl: $sourceUrl, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -51,7 +52,7 @@ abstract mixin class $EventModelCopyWith<$Res>  {
   factory $EventModelCopyWith(EventModel value, $Res Function(EventModel) _then) = _$EventModelCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String? description, String? slug, DateTime startDatetime, DateTime? endDatetime, String? price, String? currency, String? status, String? moderationStatus, String? moderationComment, DateTime? moderatedAt, VenueModel venue, CategoryModel? category, List<CategoryModel>? categories, List<EventImageModel>? images, UserWithProfileModel? promoter, String? promoterDirectId, bool isFavorite, DateTime? createdAt, DateTime? updatedAt, DateTime? deletedAt
+ String id, String title, String? description, String? slug, DateTime startDatetime, DateTime? endDatetime, String? price, String? currency, String? status, String? moderationStatus, String? moderationComment, DateTime? moderatedAt, VenueModel venue, CategoryModel? category, List<CategoryModel>? categories, List<EventImageModel>? images, UserWithProfileModel? promoter, String? promoterDirectId, bool isFavorite, String? sourceUrl, DateTime? createdAt, DateTime? updatedAt, DateTime? deletedAt
 });
 
 
@@ -68,7 +69,7 @@ class _$EventModelCopyWithImpl<$Res>
 
 /// Create a copy of EventModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? description = freezed,Object? slug = freezed,Object? startDatetime = null,Object? endDatetime = freezed,Object? price = freezed,Object? currency = freezed,Object? status = freezed,Object? moderationStatus = freezed,Object? moderationComment = freezed,Object? moderatedAt = freezed,Object? venue = null,Object? category = freezed,Object? categories = freezed,Object? images = freezed,Object? promoter = freezed,Object? promoterDirectId = freezed,Object? isFavorite = null,Object? createdAt = freezed,Object? updatedAt = freezed,Object? deletedAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? description = freezed,Object? slug = freezed,Object? startDatetime = null,Object? endDatetime = freezed,Object? price = freezed,Object? currency = freezed,Object? status = freezed,Object? moderationStatus = freezed,Object? moderationComment = freezed,Object? moderatedAt = freezed,Object? venue = null,Object? category = freezed,Object? categories = freezed,Object? images = freezed,Object? promoter = freezed,Object? promoterDirectId = freezed,Object? isFavorite = null,Object? sourceUrl = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? deletedAt = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -89,7 +90,8 @@ as List<CategoryModel>?,images: freezed == images ? _self.images : images // ign
 as List<EventImageModel>?,promoter: freezed == promoter ? _self.promoter : promoter // ignore: cast_nullable_to_non_nullable
 as UserWithProfileModel?,promoterDirectId: freezed == promoterDirectId ? _self.promoterDirectId : promoterDirectId // ignore: cast_nullable_to_non_nullable
 as String?,isFavorite: null == isFavorite ? _self.isFavorite : isFavorite // ignore: cast_nullable_to_non_nullable
-as bool,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as bool,sourceUrl: freezed == sourceUrl ? _self.sourceUrl : sourceUrl // ignore: cast_nullable_to_non_nullable
+as String?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,deletedAt: freezed == deletedAt ? _self.deletedAt : deletedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
@@ -207,10 +209,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String? description,  String? slug,  DateTime startDatetime,  DateTime? endDatetime,  String? price,  String? currency,  String? status,  String? moderationStatus,  String? moderationComment,  DateTime? moderatedAt,  VenueModel venue,  CategoryModel? category,  List<CategoryModel>? categories,  List<EventImageModel>? images,  UserWithProfileModel? promoter,  String? promoterDirectId,  bool isFavorite,  DateTime? createdAt,  DateTime? updatedAt,  DateTime? deletedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String? description,  String? slug,  DateTime startDatetime,  DateTime? endDatetime,  String? price,  String? currency,  String? status,  String? moderationStatus,  String? moderationComment,  DateTime? moderatedAt,  VenueModel venue,  CategoryModel? category,  List<CategoryModel>? categories,  List<EventImageModel>? images,  UserWithProfileModel? promoter,  String? promoterDirectId,  bool isFavorite,  String? sourceUrl,  DateTime? createdAt,  DateTime? updatedAt,  DateTime? deletedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _EventModel() when $default != null:
-return $default(_that.id,_that.title,_that.description,_that.slug,_that.startDatetime,_that.endDatetime,_that.price,_that.currency,_that.status,_that.moderationStatus,_that.moderationComment,_that.moderatedAt,_that.venue,_that.category,_that.categories,_that.images,_that.promoter,_that.promoterDirectId,_that.isFavorite,_that.createdAt,_that.updatedAt,_that.deletedAt);case _:
+return $default(_that.id,_that.title,_that.description,_that.slug,_that.startDatetime,_that.endDatetime,_that.price,_that.currency,_that.status,_that.moderationStatus,_that.moderationComment,_that.moderatedAt,_that.venue,_that.category,_that.categories,_that.images,_that.promoter,_that.promoterDirectId,_that.isFavorite,_that.sourceUrl,_that.createdAt,_that.updatedAt,_that.deletedAt);case _:
   return orElse();
 
 }
@@ -228,10 +230,10 @@ return $default(_that.id,_that.title,_that.description,_that.slug,_that.startDat
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String? description,  String? slug,  DateTime startDatetime,  DateTime? endDatetime,  String? price,  String? currency,  String? status,  String? moderationStatus,  String? moderationComment,  DateTime? moderatedAt,  VenueModel venue,  CategoryModel? category,  List<CategoryModel>? categories,  List<EventImageModel>? images,  UserWithProfileModel? promoter,  String? promoterDirectId,  bool isFavorite,  DateTime? createdAt,  DateTime? updatedAt,  DateTime? deletedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String? description,  String? slug,  DateTime startDatetime,  DateTime? endDatetime,  String? price,  String? currency,  String? status,  String? moderationStatus,  String? moderationComment,  DateTime? moderatedAt,  VenueModel venue,  CategoryModel? category,  List<CategoryModel>? categories,  List<EventImageModel>? images,  UserWithProfileModel? promoter,  String? promoterDirectId,  bool isFavorite,  String? sourceUrl,  DateTime? createdAt,  DateTime? updatedAt,  DateTime? deletedAt)  $default,) {final _that = this;
 switch (_that) {
 case _EventModel():
-return $default(_that.id,_that.title,_that.description,_that.slug,_that.startDatetime,_that.endDatetime,_that.price,_that.currency,_that.status,_that.moderationStatus,_that.moderationComment,_that.moderatedAt,_that.venue,_that.category,_that.categories,_that.images,_that.promoter,_that.promoterDirectId,_that.isFavorite,_that.createdAt,_that.updatedAt,_that.deletedAt);}
+return $default(_that.id,_that.title,_that.description,_that.slug,_that.startDatetime,_that.endDatetime,_that.price,_that.currency,_that.status,_that.moderationStatus,_that.moderationComment,_that.moderatedAt,_that.venue,_that.category,_that.categories,_that.images,_that.promoter,_that.promoterDirectId,_that.isFavorite,_that.sourceUrl,_that.createdAt,_that.updatedAt,_that.deletedAt);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -245,10 +247,10 @@ return $default(_that.id,_that.title,_that.description,_that.slug,_that.startDat
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String? description,  String? slug,  DateTime startDatetime,  DateTime? endDatetime,  String? price,  String? currency,  String? status,  String? moderationStatus,  String? moderationComment,  DateTime? moderatedAt,  VenueModel venue,  CategoryModel? category,  List<CategoryModel>? categories,  List<EventImageModel>? images,  UserWithProfileModel? promoter,  String? promoterDirectId,  bool isFavorite,  DateTime? createdAt,  DateTime? updatedAt,  DateTime? deletedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String? description,  String? slug,  DateTime startDatetime,  DateTime? endDatetime,  String? price,  String? currency,  String? status,  String? moderationStatus,  String? moderationComment,  DateTime? moderatedAt,  VenueModel venue,  CategoryModel? category,  List<CategoryModel>? categories,  List<EventImageModel>? images,  UserWithProfileModel? promoter,  String? promoterDirectId,  bool isFavorite,  String? sourceUrl,  DateTime? createdAt,  DateTime? updatedAt,  DateTime? deletedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _EventModel() when $default != null:
-return $default(_that.id,_that.title,_that.description,_that.slug,_that.startDatetime,_that.endDatetime,_that.price,_that.currency,_that.status,_that.moderationStatus,_that.moderationComment,_that.moderatedAt,_that.venue,_that.category,_that.categories,_that.images,_that.promoter,_that.promoterDirectId,_that.isFavorite,_that.createdAt,_that.updatedAt,_that.deletedAt);case _:
+return $default(_that.id,_that.title,_that.description,_that.slug,_that.startDatetime,_that.endDatetime,_that.price,_that.currency,_that.status,_that.moderationStatus,_that.moderationComment,_that.moderatedAt,_that.venue,_that.category,_that.categories,_that.images,_that.promoter,_that.promoterDirectId,_that.isFavorite,_that.sourceUrl,_that.createdAt,_that.updatedAt,_that.deletedAt);case _:
   return null;
 
 }
@@ -260,7 +262,7 @@ return $default(_that.id,_that.title,_that.description,_that.slug,_that.startDat
 @JsonSerializable()
 
 class _EventModel implements EventModel {
-  const _EventModel({required this.id, required this.title, this.description, this.slug, required this.startDatetime, this.endDatetime, this.price, this.currency, this.status, this.moderationStatus, this.moderationComment, this.moderatedAt, required this.venue, this.category, final  List<CategoryModel>? categories, final  List<EventImageModel>? images, this.promoter, this.promoterDirectId, this.isFavorite = false, this.createdAt, this.updatedAt, this.deletedAt}): _categories = categories,_images = images;
+  const _EventModel({required this.id, required this.title, this.description, this.slug, required this.startDatetime, this.endDatetime, this.price, this.currency, this.status, this.moderationStatus, this.moderationComment, this.moderatedAt, required this.venue, this.category, final  List<CategoryModel>? categories, final  List<EventImageModel>? images, this.promoter, this.promoterDirectId, this.isFavorite = false, this.sourceUrl, this.createdAt, this.updatedAt, this.deletedAt}): _categories = categories,_images = images;
   factory _EventModel.fromJson(Map<String, dynamic> json) => _$EventModelFromJson(json);
 
 @override final  String id;
@@ -302,6 +304,8 @@ class _EventModel implements EventModel {
 // promoter_id del tile (cuando no viene objeto promoter completo)
 @override@JsonKey() final  bool isFavorite;
 // Si está en favoritos del usuario
+@override final  String? sourceUrl;
+// URL del origen del evento
 @override final  DateTime? createdAt;
 @override final  DateTime? updatedAt;
 @override final  DateTime? deletedAt;
@@ -319,16 +323,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.startDatetime, startDatetime) || other.startDatetime == startDatetime)&&(identical(other.endDatetime, endDatetime) || other.endDatetime == endDatetime)&&(identical(other.price, price) || other.price == price)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.status, status) || other.status == status)&&(identical(other.moderationStatus, moderationStatus) || other.moderationStatus == moderationStatus)&&(identical(other.moderationComment, moderationComment) || other.moderationComment == moderationComment)&&(identical(other.moderatedAt, moderatedAt) || other.moderatedAt == moderatedAt)&&(identical(other.venue, venue) || other.venue == venue)&&(identical(other.category, category) || other.category == category)&&const DeepCollectionEquality().equals(other._categories, _categories)&&const DeepCollectionEquality().equals(other._images, _images)&&(identical(other.promoter, promoter) || other.promoter == promoter)&&(identical(other.promoterDirectId, promoterDirectId) || other.promoterDirectId == promoterDirectId)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.startDatetime, startDatetime) || other.startDatetime == startDatetime)&&(identical(other.endDatetime, endDatetime) || other.endDatetime == endDatetime)&&(identical(other.price, price) || other.price == price)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.status, status) || other.status == status)&&(identical(other.moderationStatus, moderationStatus) || other.moderationStatus == moderationStatus)&&(identical(other.moderationComment, moderationComment) || other.moderationComment == moderationComment)&&(identical(other.moderatedAt, moderatedAt) || other.moderatedAt == moderatedAt)&&(identical(other.venue, venue) || other.venue == venue)&&(identical(other.category, category) || other.category == category)&&const DeepCollectionEquality().equals(other._categories, _categories)&&const DeepCollectionEquality().equals(other._images, _images)&&(identical(other.promoter, promoter) || other.promoter == promoter)&&(identical(other.promoterDirectId, promoterDirectId) || other.promoterDirectId == promoterDirectId)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.sourceUrl, sourceUrl) || other.sourceUrl == sourceUrl)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,title,description,slug,startDatetime,endDatetime,price,currency,status,moderationStatus,moderationComment,moderatedAt,venue,category,const DeepCollectionEquality().hash(_categories),const DeepCollectionEquality().hash(_images),promoter,promoterDirectId,isFavorite,createdAt,updatedAt,deletedAt]);
+int get hashCode => Object.hashAll([runtimeType,id,title,description,slug,startDatetime,endDatetime,price,currency,status,moderationStatus,moderationComment,moderatedAt,venue,category,const DeepCollectionEquality().hash(_categories),const DeepCollectionEquality().hash(_images),promoter,promoterDirectId,isFavorite,sourceUrl,createdAt,updatedAt,deletedAt]);
 
 @override
 String toString() {
-  return 'EventModel(id: $id, title: $title, description: $description, slug: $slug, startDatetime: $startDatetime, endDatetime: $endDatetime, price: $price, currency: $currency, status: $status, moderationStatus: $moderationStatus, moderationComment: $moderationComment, moderatedAt: $moderatedAt, venue: $venue, category: $category, categories: $categories, images: $images, promoter: $promoter, promoterDirectId: $promoterDirectId, isFavorite: $isFavorite, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+  return 'EventModel(id: $id, title: $title, description: $description, slug: $slug, startDatetime: $startDatetime, endDatetime: $endDatetime, price: $price, currency: $currency, status: $status, moderationStatus: $moderationStatus, moderationComment: $moderationComment, moderatedAt: $moderatedAt, venue: $venue, category: $category, categories: $categories, images: $images, promoter: $promoter, promoterDirectId: $promoterDirectId, isFavorite: $isFavorite, sourceUrl: $sourceUrl, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -339,7 +343,7 @@ abstract mixin class _$EventModelCopyWith<$Res> implements $EventModelCopyWith<$
   factory _$EventModelCopyWith(_EventModel value, $Res Function(_EventModel) _then) = __$EventModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String? description, String? slug, DateTime startDatetime, DateTime? endDatetime, String? price, String? currency, String? status, String? moderationStatus, String? moderationComment, DateTime? moderatedAt, VenueModel venue, CategoryModel? category, List<CategoryModel>? categories, List<EventImageModel>? images, UserWithProfileModel? promoter, String? promoterDirectId, bool isFavorite, DateTime? createdAt, DateTime? updatedAt, DateTime? deletedAt
+ String id, String title, String? description, String? slug, DateTime startDatetime, DateTime? endDatetime, String? price, String? currency, String? status, String? moderationStatus, String? moderationComment, DateTime? moderatedAt, VenueModel venue, CategoryModel? category, List<CategoryModel>? categories, List<EventImageModel>? images, UserWithProfileModel? promoter, String? promoterDirectId, bool isFavorite, String? sourceUrl, DateTime? createdAt, DateTime? updatedAt, DateTime? deletedAt
 });
 
 
@@ -356,7 +360,7 @@ class __$EventModelCopyWithImpl<$Res>
 
 /// Create a copy of EventModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? description = freezed,Object? slug = freezed,Object? startDatetime = null,Object? endDatetime = freezed,Object? price = freezed,Object? currency = freezed,Object? status = freezed,Object? moderationStatus = freezed,Object? moderationComment = freezed,Object? moderatedAt = freezed,Object? venue = null,Object? category = freezed,Object? categories = freezed,Object? images = freezed,Object? promoter = freezed,Object? promoterDirectId = freezed,Object? isFavorite = null,Object? createdAt = freezed,Object? updatedAt = freezed,Object? deletedAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? description = freezed,Object? slug = freezed,Object? startDatetime = null,Object? endDatetime = freezed,Object? price = freezed,Object? currency = freezed,Object? status = freezed,Object? moderationStatus = freezed,Object? moderationComment = freezed,Object? moderatedAt = freezed,Object? venue = null,Object? category = freezed,Object? categories = freezed,Object? images = freezed,Object? promoter = freezed,Object? promoterDirectId = freezed,Object? isFavorite = null,Object? sourceUrl = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? deletedAt = freezed,}) {
   return _then(_EventModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -377,7 +381,8 @@ as List<CategoryModel>?,images: freezed == images ? _self._images : images // ig
 as List<EventImageModel>?,promoter: freezed == promoter ? _self.promoter : promoter // ignore: cast_nullable_to_non_nullable
 as UserWithProfileModel?,promoterDirectId: freezed == promoterDirectId ? _self.promoterDirectId : promoterDirectId // ignore: cast_nullable_to_non_nullable
 as String?,isFavorite: null == isFavorite ? _self.isFavorite : isFavorite // ignore: cast_nullable_to_non_nullable
-as bool,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as bool,sourceUrl: freezed == sourceUrl ? _self.sourceUrl : sourceUrl // ignore: cast_nullable_to_non_nullable
+as String?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,deletedAt: freezed == deletedAt ? _self.deletedAt : deletedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
